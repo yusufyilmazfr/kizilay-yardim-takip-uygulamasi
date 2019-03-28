@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kizilay", "kizilay\kizilay.csproj", "{E867316E-B1EB-47EE-B17C-1350C657926E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Debug|x86.ActiveCfg = Debug|x86
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Debug|x86.Build.0 = Debug|x86
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Release|x86.ActiveCfg = Release|x86
+		{E867316E-B1EB-47EE-B17C-1350C657926E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52FBF712-E74B-47AF-A578-954F7487DF4E}
+	EndGlobalSection
+EndGlobal

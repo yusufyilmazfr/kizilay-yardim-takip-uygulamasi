@@ -1,0 +1,58 @@
+C:\Users\Yusuf\source\repos\kizilay\kizilay\bin\Debug\kizilay.exe.config
+C:\Users\Yusuf\source\repos\kizilay\kizilay\bin\Debug\kizilay.exe
+C:\Users\Yusuf\source\repos\kizilay\kizilay\bin\Debug\kizilay.pdb
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.csprojAssemblyReference.cache
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.Properties.Resources.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.csproj.GenerateResource.cache
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.csproj.CoreCompileInputs.cache
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.exe
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.pdb
+C:\Users\Yusuf\source\repos\kizilay\kizilay\bin\Debug\data.accdb
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmDashboard.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmSocialSecurity.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmEducationalStatus.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmHousing.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmFamilyDashboard.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmNewFamily.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmNewPerson.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmDonateDashboard.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmNewDonate.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmFamilyDonationProcess.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmAllFamily.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmEditPerson.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmAccountLogin.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmLogin.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmDonate.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmEditDonate.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.csproj.ResolveComReference.cache
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmEditFamily.resources
+C:\Users\Yusuf\source\repos\kizilay\kizilay\obj\Debug\kizilay.frmEditPassword.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\bin\Debug\data.accdb
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\bin\Debug\kizilay.exe.config
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\bin\Debug\kizilay.exe
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\bin\Debug\kizilay.pdb
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.csprojAssemblyReference.cache
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.csproj.ResolveComReference.cache
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmAllFamily.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmDashboard.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmDonate.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmDonateDashboard.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmEditDonate.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmEditFamily.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmEditPassword.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmEditPerson.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmEducationalStatus.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmFamilyDashboard.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmFamilyDonationProcess.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmHousing.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmLogin.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmNewDonate.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmNewFamily.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmSocialSecurity.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmAccountLogin.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.frmNewPerson.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.Properties.Resources.resources
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.csproj.GenerateResource.cache
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.csproj.CoreCompileInputs.cache
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.exe
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\kizilay\obj\Debug\kizilay.pdb

@@ -1,0 +1,311 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E867316E-B1EB-47EE-B17C-1350C657926E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>kizilay</RootNamespace>
+    <AssemblyName>kizilay</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon1.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AllPersonModel.cs" />
+    <Compile Include="CreateMD5.cs" />
+    <Compile Include="DonationModel.cs" />
+    <Compile Include="DonationProcessModel.cs" />
+    <Compile Include="frmAllFamily.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAllFamily.Designer.cs">
+      <DependentUpon>frmAllFamily.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDashboard.Designer.cs">
+      <DependentUpon>frmDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmDonate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDonate.Designer.cs">
+      <DependentUpon>frmDonate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmDonateDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDonateDashboard.Designer.cs">
+      <DependentUpon>frmDonateDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditDonate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditDonate.Designer.cs">
+      <DependentUpon>frmEditDonate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditFamily.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditFamily.Designer.cs">
+      <DependentUpon>frmEditFamily.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditPassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditPassword.Designer.cs">
+      <DependentUpon>frmEditPassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditPerson.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditPerson.Designer.cs">
+      <DependentUpon>frmEditPerson.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEducationalStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEducationalStatus.Designer.cs">
+      <DependentUpon>frmEducationalStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmFamilyDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFamilyDashboard.Designer.cs">
+      <DependentUpon>frmFamilyDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmFamilyDonationProcess.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmFamilyDonationProcess.Designer.cs">
+      <DependentUpon>frmFamilyDonationProcess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmHousing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmHousing.Designer.cs">
+      <DependentUpon>frmHousing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLogin.Designer.cs">
+      <DependentUpon>frmLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmNewDonate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmNewDonate.Designer.cs">
+      <DependentUpon>frmNewDonate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmNewFamily.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmNewFamily.Designer.cs">
+      <DependentUpon>frmNewFamily.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSocialSecurity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSocialSecurity.Designer.cs">
+      <DependentUpon>frmSocialSecurity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="image\SqlHelper.cs" />
+    <Compile Include="frmAccountLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAccountLogin.Designer.cs">
+      <DependentUpon>frmAccountLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmNewPerson.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmNewPerson.Designer.cs">
+      <DependentUpon>frmNewPerson.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PersonModel.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadExcel.cs" />
+    <Compile Include="SqlHelper.cs" />
+    <Compile Include="WriteDataToExcel.cs" />
+    <EmbeddedResource Include="frmAllFamily.resx">
+      <DependentUpon>frmAllFamily.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDashboard.resx">
+      <DependentUpon>frmDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDonate.resx">
+      <DependentUpon>frmDonate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDonateDashboard.resx">
+      <DependentUpon>frmDonateDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditDonate.resx">
+      <DependentUpon>frmEditDonate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditFamily.resx">
+      <DependentUpon>frmEditFamily.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditPassword.resx">
+      <DependentUpon>frmEditPassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditPerson.resx">
+      <DependentUpon>frmEditPerson.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEducationalStatus.resx">
+      <DependentUpon>frmEducationalStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmFamilyDashboard.resx">
+      <DependentUpon>frmFamilyDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmFamilyDonationProcess.resx">
+      <DependentUpon>frmFamilyDonationProcess.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmHousing.resx">
+      <DependentUpon>frmHousing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmLogin.resx">
+      <DependentUpon>frmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmNewDonate.resx">
+      <DependentUpon>frmNewDonate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmNewFamily.resx">
+      <DependentUpon>frmNewFamily.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSocialSecurity.resx">
+      <DependentUpon>frmSocialSecurity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAccountLogin.resx">
+      <DependentUpon>frmAccountLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmNewPerson.resx">
+      <DependentUpon>frmNewPerson.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="data.accdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="favicon1.ico" />
+    <Content Include="image\all-family.png" />
+    <Content Include="image\category.png" />
+    <Content Include="image\create family.png" />
+    <Content Include="image\create family1.png" />
+    <Content Include="image\d-setting.png" />
+    <Content Include="image\donate.png" />
+    <Content Include="image\edit-donate.png" />
+    <Content Include="image\education.png" />
+    <Content Include="image\export image.png" />
+    <Content Include="image\family-member.png" />
+    <Content Include="image\family.png" />
+    <Content Include="image\favicon1.ico" />
+    <Content Include="image\home.png" />
+    <Content Include="image\house.png" />
+    <Content Include="image\import.png" />
+    <Content Include="image\ktu-logo.jpg" />
+    <Content Include="image\ktu.jpg" />
+    <Content Include="image\mother.png" />
+    <Content Include="image\settings.png" />
+    <Content Include="image\social security.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>7</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
