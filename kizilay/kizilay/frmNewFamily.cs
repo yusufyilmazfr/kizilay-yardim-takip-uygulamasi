@@ -127,6 +127,34 @@ namespace kizilay
             helper.connection.Dispose();
         }
 
+        private void FindNeigId()
+        {
+            SqlHelper helper = new SqlHelper();
+
+            helper.command.CommandText = "SELECT TOP 1 Id FROM Neighborhoods WHERE Name = @p1 AND TownId=@p2";
+
+            helper.command.Parameters.AddWithValue("@p1", cmbNeig.SelectedItem.ToString());
+            helper.command.Parameters.AddWithValue("@p1", TownId);
+
+            helper.connection.Open();
+
+            OleDbDataReader reader = helper.command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    NeigId = Convert.ToInt32(reader["Id"]);
+                }
+            }
+
+            reader.Close();
+            reader.Dispose();
+
+            helper.connection.Close();
+            helper.connection.Dispose();
+        }
+
         public void FillTowns()
         {
             SqlHelper helper = new SqlHelper();
@@ -151,7 +179,6 @@ namespace kizilay
             helper.connection.Close();
             helper.connection.Dispose();
         }
-
 
         private void FindCityId(string cityName)
         {
@@ -216,6 +243,7 @@ namespace kizilay
                     numPersonCount.Enabled = true;
                     cmbHousingList.Enabled = true;
                     cmbCities.Enabled = true;
+                    numPriority.Enabled = true;
                 }
 
                 helper.connection.Close();
@@ -263,16 +291,22 @@ namespace kizilay
 
                 helper.command = helper.connection.CreateCommand();
 
+                FindNeigId();
 
-                helper.command.CommandText =
-                    string.Format(
-                        "INSERT INTO Family (FatherNo,HousingId,PersonCount) values ('{0}',{1},{2})"
-                        , TCNo, houseTypeId, personCount);
+                helper.command.CommandText = "INSERT INTO Family (FatherNo,HousingId,Priority,PersonCount,Address,NeighborhoodsId) values (@p1,@p2,@p3,@p4,@p5,@p6)";
+
+                helper.command.Parameters.AddWithValue("@p1", TCNo);
+                helper.command.Parameters.AddWithValue("@p2", houseTypeId);
+                helper.command.Parameters.AddWithValue("@p3", Convert.ToInt32(numPriority.Value));
+                helper.command.Parameters.AddWithValue("@p4", personCount);
+                helper.command.Parameters.AddWithValue("@p5", rchAddress.Text);
+                helper.command.Parameters.AddWithValue("@p6", NeigId);
+
                 try
                 {
                     helper.command.ExecuteNonQuery();
 
-                    MessageBox.Show("Başarıyla oluştu. Ana ekrana yönlendiriliyorsunuz!");
+                    MessageBox.Show("Başarıyla oluştu. Ana ekrana yönlendiriliyorsunuz.. :)","",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -301,6 +335,7 @@ namespace kizilay
             if (cmbCities.SelectedIndex != -1)
             {
                 cmbTowns.Items.Clear();
+                cmbNeig.Items.Clear();
                 cmbTowns.Enabled = true;
 
                 FindCityId(cmbCities.SelectedItem.ToString());
@@ -308,7 +343,6 @@ namespace kizilay
             }
         }
 
-     
         private void cmbTowns_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbTowns.SelectedIndex != -1)
@@ -322,6 +356,18 @@ namespace kizilay
 
         }
 
-     
+        private void cmbNeig_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbNeig.SelectedIndex != -1)
+            {
+                rchAddress.Enabled = true;
+                btnCreate.Enabled = true;
+            }
+            else
+            {
+                btnCreate.Enabled = false;
+                rchAddress.Enabled = false;
+            }
+        }
     }
 }

@@ -23,12 +23,104 @@ namespace kizilay
         }
 
         public System.Data.DataTable dataTable { get; set; }
+
         public Thread thread { get; set; }
 
         public Dictionary<int, string> educationalStatusList { get; set; }
         public Dictionary<int, string> socialSecurityList { get; set; }
         public Dictionary<int, string> homeTypeList { get; set; }
 
+       
+        public int FindTownId(string townName, int CityId)
+        {
+            SqlHelper helper = new SqlHelper();
+
+            helper.command.CommandText = "SELECT TOP 1 Id FROM Towns WHERE Name = @p1 AND CityId=@p2";
+            helper.command.Parameters.AddWithValue("@p1", townName);
+            helper.command.Parameters.AddWithValue("@p2", CityId);
+
+            helper.connection.Open();
+
+            OleDbDataReader reader = helper.command.ExecuteReader();
+            int TownId = 0;
+            
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    TownId = Convert.ToInt32(reader["Id"]);
+                }
+            }
+
+            reader.Close();
+            reader.Dispose();
+
+            helper.connection.Close();
+            helper.connection.Dispose();
+
+            return TownId;
+        }
+
+        private int  FindNeigId(string NeighName, int TownId)
+        {
+            SqlHelper helper = new SqlHelper();
+
+            helper.command.CommandText = "SELECT TOP 1 Id FROM Neighborhoods WHERE Name = @p1 AND TownId=@p2";
+
+            helper.command.Parameters.AddWithValue("@p1", NeighName);
+            helper.command.Parameters.AddWithValue("@p1", TownId);
+
+            helper.connection.Open();
+
+            OleDbDataReader reader = helper.command.ExecuteReader();
+
+            int NeigId = 0;
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    NeigId = Convert.ToInt32(reader["Id"]);
+                }
+            }
+
+            reader.Close();
+            reader.Dispose();
+
+            helper.connection.Close();
+            helper.connection.Dispose();
+
+            return NeigId;
+        }
+
+        private int FindCityId(string cityName)
+        {
+            SqlHelper helper = new SqlHelper();
+
+            helper.command.CommandText = "SELECT TOP 1 Id FROM Cities WHERE Name = @p1";
+            helper.command.Parameters.AddWithValue("@p1", cityName);
+
+            helper.connection.Open();
+
+            OleDbDataReader reader = helper.command.ExecuteReader();
+
+            int CityId = 0;
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    CityId = Convert.ToInt32(reader["Id"]);
+                }
+            }
+
+            reader.Close();
+            reader.Dispose();
+
+            helper.connection.Close();
+            helper.connection.Dispose();
+
+            return CityId;
+        }
 
         public void StartImport()
         {
@@ -55,7 +147,19 @@ namespace kizilay
 
                             if (familyId == 0)
                             {
-                                if (!CreateNewFamily(list.Rows[i]["FatherNo"].ToString()))
+                                //string FatherNo, int Priority, int NeighborhoodsId, string Address
+                                string FatherNo = list.Rows[i]["FatherNo"].ToString();
+                                string Address = list.Rows[i]["Address"].ToString();
+                                int Priority = Convert.ToInt32(list.Rows[i]["Priority"]);
+
+
+                                int CityId = FindCityId(list.Rows[i]["CityName"].ToString());
+                                int TownId = FindTownId(list.Rows[i]["TownName"].ToString(), CityId);
+                                int NeighborhoodsId = FindNeigId(list.Rows[i]["NeighborhoodsName"].ToString(), TownId);
+
+
+
+                                if (!CreateNewFamily(FatherNo,Priority,NeighborhoodsId,Address))
                                 {
                                     break;
                                 }
@@ -227,13 +331,16 @@ namespace kizilay
             return familyId;
         }
 
-        public bool CreateNewFamily(string FatherNo)
+        public bool CreateNewFamily(string FatherNo, int Priority, int NeighborhoodsId, string Address)
         {
             SqlHelper helper = new SqlHelper();
 
-            helper.command.CommandText = "INSERT INTO Family (HousingId,FatherNo,PersonCount) values(1,@p2,3)";
+            helper.command.CommandText = "INSERT INTO Family (HousingId,FatherNo,PersonCount,Priority,NeighborhoodsId,Address) values(1,@p2,3,@p4,@p5,@p6)";
 
             helper.command.Parameters.AddWithValue("@p2", FatherNo);
+            helper.command.Parameters.AddWithValue("@p4", Priority);
+            helper.command.Parameters.AddWithValue("@p5", NeighborhoodsId);
+            helper.command.Parameters.AddWithValue("@p6", Address);
 
             bool result;
 
@@ -246,6 +353,7 @@ namespace kizilay
                 helper.connection.Close();
                 helper.connection.Dispose();
             }
+
             catch (Exception)
             {
                 result = false;
@@ -258,7 +366,7 @@ namespace kizilay
         {
             SqlHelper helper = new SqlHelper();
 
-            helper.command.CommandText = "INSERT INTO Person (TC, Citizenship, Name, Surname, BirthDate, PlaceOfBirth, Gender, JobState, JobDescription, Salary, MobilePhone, HomePhone, Address, MotherName, FatherName, isMarried, EducationalStatus, SocialSecurityId, FamilyId) values(@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12,@p13,@p14,@p15,@16,@p17,@p18,@p19)";
+            helper.command.CommandText = "INSERT INTO Person (TC, Citizenship, Name, Surname, BirthDate, PlaceOfBirth, Gender, JobState, JobDescription, Salary, MobilePhone, HomePhone, MotherName, FatherName, isMarried, EducationalStatus, SocialSecurityId, FamilyId) values(@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12,@p14,@p15,@16,@p17,@p18,@p19)";
 
             helper.command.Parameters.AddWithValue("@p1", model.TC.ToString());
             helper.command.Parameters.AddWithValue("@p2", model.Citizenship);
@@ -272,7 +380,6 @@ namespace kizilay
             helper.command.Parameters.AddWithValue("@p10", model.Salary);
             helper.command.Parameters.AddWithValue("@p11", model.MobilePhone);
             helper.command.Parameters.AddWithValue("@p12", model.HomePhone);
-            helper.command.Parameters.AddWithValue("@p13", model.Address);
             helper.command.Parameters.AddWithValue("@p14", model.MotherName);
             helper.command.Parameters.AddWithValue("@p15", model.FatherName);
             helper.command.Parameters.AddWithValue("@p16", model.isMarried);
@@ -295,10 +402,42 @@ namespace kizilay
             SqlHelper helper = new SqlHelper();
 
             helper.command.CommandText = "SELECT " +
-                "P.TC, P.Citizenship, P.Name, P.Surname, P.BirthDate, P.PlaceOfBirth,  Replace(Replace(P.Gender,0,'Kadın'), 1, 'Erkek') as Gender, Replace(Replace(P.JobState,0,'Çalışmıyor'), 1, 'Çalışıyor') as JobState, P.JobDescription, P.Salary, P.MobilePhone, P.HomePhone, P.Address, P.MotherName, P.FatherName, P.isMarried, ES.Name as EducationalStatusName, SS.Name as SocialSecurityName, F.FatherNo FROM  (((Person as P " +
-                "INNER JOIN EducationalStatus as ES ON P.EducationalStatus = ES.Id) " +
-                "INNER JOIN SocialSecurity as SS ON P.SocialSecurityId = SS.Id) " +
-                "INNER JOIN Family as F ON F.Id = P.FamilyId)";
+                "P.TC," +
+                "P.Citizenship," +
+                "P.Name," +
+                "P.Surname," +
+                "P.BirthDate," +
+                "P.PlaceOfBirth," +
+                "C.Name as CityName," +
+                "T.Name as TownName," +
+                "N.Name as NeighborhoodsName," +
+                "F.Address," +
+                "Replace(Replace(P.Gender,0,'Kadın'), 1, 'Erkek') as Gender," +
+                "Replace(Replace(P.JobState,0,'Çalışmıyor'), 1, 'Çalışıyor') as JobState," +
+                "P.JobDescription," +
+                "P.Salary," +
+                "P.MobilePhone," +
+                "P.HomePhone," +
+                "P.MotherName," +
+                "P.FatherName," +
+                "P.isMarried," +
+                "ES.Name as EducationalStatusName," +
+                "SS.Name as SocialSecurityName," +
+                "F.Priority," +
+                "F.FatherNo as FatherNo " +
+                "FROM  (" +
+                "        (" +
+                "          (" +
+                "            (" +
+                "              (" +
+                "                (" +
+                "                   Person as P " +
+                "                       INNER JOIN EducationalStatus as ES ON P.EducationalStatus = ES.Id) " +
+                "                          INNER JOIN SocialSecurity as SS ON P.SocialSecurityId = SS.Id) " +
+                "                               INNER JOIN Family as F ON F.Id = P.FamilyId) " +
+                "                                   INNER JOIN Neighborhoods as N ON N.Id = F.NeighborhoodsId) " +
+                "                                       INNER JOIN Towns as T ON T.Id = N.TownId) " +
+                "                                           INNER JOIN Cities as C ON C.Id = T.CityId)";
 
             helper.connection.Open();
 
@@ -311,7 +450,7 @@ namespace kizilay
                 dataTable.Rows[i]["Gender"] = dataTable.Rows[i]["Gender"].ToString().Trim('-');
                 dataTable.Rows[i]["JobState"] = dataTable.Rows[i]["JobState"].ToString().Trim('-');
             }
-            
+
             helper.connection.Close();
             helper.connection.Dispose();
 

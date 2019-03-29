@@ -44,11 +44,11 @@ namespace kizilay
                     data[0, x] = dataTable.Columns[x].ColumnName;
                 }
                 //basliklari kalin ve sutünun ortasina pozisyonliyalim
-                var boldformat = xlWorkSheet.get_Range("A1", "T1");
+                var boldformat = xlWorkSheet.get_Range("A1", "W1");
                 var m_objfont = boldformat.Font;
                 m_objfont.Bold = true;
 
-                var verformat = xlWorkSheet.get_Range("A1", "T1");
+                var verformat = xlWorkSheet.get_Range("A1", "W1");
                 verformat.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
                 //satirlari objemize ekliyelim
@@ -63,10 +63,10 @@ namespace kizilay
                 //K sütünün Text olarak formatliyalim 
                 string endcelltelephone = "K" + (dataTable.Rows.Count + 1);
                 var writeFormat = xlWorkSheet.get_Range("K1", endcelltelephone);
-                writeFormat.NumberFormat = "@";
+                writeFormat.NumberFormat = "@"; 
 
                 //Objeyi ekliyecegimiz Range i belirliyelim
-                string endcell = "T" + (dataTable.Rows.Count + 1);
+                string endcell = "W" + (dataTable.Rows.Count + 1);
                 var writeR = xlWorkSheet.get_Range("A1", endcell);
                 //objeyi hazirladigimiz range e ekliyelim
                 writeR.Value2 = data;
