@@ -184,11 +184,12 @@ namespace kizilay
                                         donationProcesses.Add(new DonationProcessModel()
                                         {
                                             // Name kolonu hatalı..
+                                            donationId = Convert.ToInt32(dataTable.Rows[j][26]),
+                                            DonationName = dataTable.Rows[j][32].ToString(),
                                             PersonName = dataTable.Rows[j][3].ToString(),
                                             PersonLastName = dataTable.Rows[j]["Surname"].ToString(),
                                             Description = dataTable.Rows[j]["Description"].ToString(),
-                                            DonationDate = (DateTime)dataTable.Rows[j]["AddedDate"],
-                                            DonationName = dataTable.Rows[i][7].ToString()
+                                            DonationDate = (DateTime)dataTable.Rows[j]["AddedDate"]
                                         });
                                     }
 

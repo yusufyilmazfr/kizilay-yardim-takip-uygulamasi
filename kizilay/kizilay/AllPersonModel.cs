@@ -12,8 +12,12 @@ namespace kizilay
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Phone { get; set; }
-        public string JobDescription { get; set; }
         public string BirthDate { get; set; }
+        public string Address { get; set; }
+        public string JobDescription { get; set; }
+        public int familyPriority { get; set; }
         public string FatherTC { get; set; }
+
+
     }
 }
