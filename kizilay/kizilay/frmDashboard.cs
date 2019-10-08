@@ -68,7 +68,7 @@ namespace kizilay
             helper.command.CommandText = "SELECT TOP 1 Id FROM Neighborhoods WHERE Name = @p1 AND TownId=@p2";
 
             helper.command.Parameters.AddWithValue("@p1", NeighName);
-            helper.command.Parameters.AddWithValue("@p1", TownId);
+            helper.command.Parameters.AddWithValue("@p2", TownId);
 
             helper.connection.Open();
 
@@ -156,6 +156,8 @@ namespace kizilay
                                 int CityId = FindCityId(list.Rows[i]["CityName"].ToString());
                                 int TownId = FindTownId(list.Rows[i]["TownName"].ToString(), CityId);
                                 int NeighborhoodsId = FindNeigId(list.Rows[i]["NeighborhoodsName"].ToString(), TownId);
+                                //int NeighborhoodsId = 1377;
+                                
 
 
 

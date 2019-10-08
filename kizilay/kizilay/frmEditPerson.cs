@@ -21,10 +21,10 @@ namespace kizilay
         public int newFamilyId { get; set; }
 
 
+
         private void GetPersonInformation()
         {
             SqlHelper helper = new SqlHelper();
-
         }
 
         private void FillAllBase()
@@ -96,6 +96,58 @@ namespace kizilay
                 return false;
             }
 
+        }
+
+        public void FindEducationalStatus()
+        {
+            SqlHelper helper = new SqlHelper();
+
+            helper.command.CommandText = "SELECT E.Name FROM EducationalStatus AS E INNER JOIN Person AS P ON P.EducationalStatus = E.Id WHERE P.TC = @p1";
+
+            helper.command.Parameters.AddWithValue("@p1", personTC);
+
+
+            helper.connection.Open();
+
+            OleDbDataReader reader = helper.command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                cmbEducationalStatus.SelectedItem = reader.GetString(0);
+            }
+
+
+            reader.Close();
+            reader.Dispose();
+
+            helper.connection.Close();
+            helper.connection.Dispose();
+        }
+
+        public void FindSocialSecurity()
+        {
+            SqlHelper helper = new SqlHelper();
+
+            helper.command.CommandText = "SELECT S.Name FROM SocialSecurity AS S INNER JOIN Person AS P ON P.SocialSecurityId = S.Id WHERE P.TC = @p1";
+
+            helper.command.Parameters.AddWithValue("@p1", personTC);
+
+
+            helper.connection.Open();
+
+            OleDbDataReader reader = helper.command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                cmbSocialSecurity.SelectedItem = reader.GetString(0);
+            }
+
+
+            reader.Close();
+            reader.Dispose();
+
+            helper.connection.Close();
+            helper.connection.Dispose();
         }
 
         public void FillEducationStateList()
@@ -181,6 +233,8 @@ namespace kizilay
             FillComboBoxEducation();
             FillComboBoxSocialSecurity();
             FillAllBase();
+            FindEducationalStatus();
+            FindSocialSecurity();
         }
 
         private void chckWorking_CheckedChanged(object sender, EventArgs e)
