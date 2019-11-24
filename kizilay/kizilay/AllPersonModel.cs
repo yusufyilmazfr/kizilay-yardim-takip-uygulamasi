@@ -17,7 +17,5 @@ namespace kizilay
         public string JobDescription { get; set; }
         public int familyPriority { get; set; }
         public string FatherTC { get; set; }
-
-
     }
 }

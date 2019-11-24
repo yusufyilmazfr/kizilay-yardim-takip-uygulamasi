@@ -1,0 +1,5 @@
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Entities\bin\Debug\Kizilay.Entities.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Entities\bin\Debug\Kizilay.Entities.pdb
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Entities\obj\Debug\Kizilay.Entities.csproj.CoreCompileInputs.cache
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Entities\obj\Debug\Kizilay.Entities.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Entities\obj\Debug\Kizilay.Entities.pdb

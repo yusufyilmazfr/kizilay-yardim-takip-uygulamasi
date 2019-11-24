@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Kizilay.Business.Abstract;
+using Kizilay.Entities.Concrete;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,53 +15,46 @@ namespace kizilay
 {
     public partial class frmEditDonate : Form
     {
-        public DonationProcessModel model { get; set; }
+        private IPersonDonationManager _personDonationManager { get; set; }
 
-        public frmEditDonate()
+        public int donationId { get; set; }
+
+        public frmEditDonate(IPersonDonationManager personDonationManager)
         {
+            _personDonationManager = personDonationManager;
+
             InitializeComponent();
         }
 
         private void frmEditDonate_Load(object sender, EventArgs e)
         {
-            rchDescription.Text = model.Description;
-            dateTimePicker.Value = model.DonationDate;
+            var donation = _personDonationManager.GetById(donationId);
+
+            rchDescription.Text = donation.Description;
+            dateTimePicker.Value = donation.AddedDate;
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            try
+            Person_Donation donation = new Person_Donation()
             {
+                Id = donationId,
+                AddedDate = dateTimePicker.Value,
+                Description = rchDescription.Text
+            };
 
-                SqlHelper helper = new SqlHelper();
+            var layerResult = _personDonationManager.Update(donation);
 
-                helper.command.CommandText = "UPDATE Person_Donation SET AddedDate=@p1, Description=@p2 WHERE Id=@p3";
+            if (!layerResult.HasError())
+            {
+                MessageBox.Show("Bağış düzenleme başarıyla gerçekleştirildi, yönlendiriliyorsunuz...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                helper.command.Parameters.AddWithValue("@p1", dateTimePicker.Value);
-                helper.command.Parameters.AddWithValue("@p2", rchDescription.Text);
-                helper.command.Parameters.AddWithValue("@p3", model.donationId);
-
-                helper.connection.Open();
-
-                int count = helper.command.ExecuteNonQuery();
-
-                if (count > 0)
-                {
-                    MessageBox.Show("Bağış düzenleme başarıyla gerçekleştirildi, yönlendiriliyorsunuz...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    this.DialogResult = DialogResult.Yes;
-                }
-                else
-                {
-                    MessageBox.Show("Herhangi bir güncelleme işlemi gerçekleştirilemedi, daha sonra tekrar deneyin.", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                }
-
-                helper.connection.Close();
-                helper.connection.Dispose();
+                this.DialogResult = DialogResult.Yes;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message);
+                var firstError = layerResult.Errors.FirstOrDefault();
+                MessageBox.Show(firstError, "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
         }
     }

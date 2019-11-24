@@ -1,4 +1,7 @@
-﻿using System;
+﻿using kizilay.Item;
+using Kizilay.Business.Abstract;
+using Kizilay.Entities.Concrete;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,306 +16,213 @@ namespace kizilay
 {
     public partial class frmEditFamily : Form
     {
-        public Dictionary<int, string> housingList { get; set; }
+        private IHousingManager _housingManager { get; set; }
+        private ICityManager _cityManager { get; set; }
+        private ITownManager _townManager { get; set; }
+        private INeighborhoodManager _neighborhoodManager { get; set; }
+        private IFamilyManager _familyManager { get; set; }
 
-        public string familyCityName { get; set; }
-        public string familyTownName { get; set; }
-        public string familyNeigName { get; set; }
-
-
-        public int familyCityId { get; set; }
-        public int familyTownId { get; set; }
-        public int familyNeigId { get; set; }
-
-
-        public void FindTownId(string townName)
+        public frmEditFamily(IHousingManager housingManager,
+            ICityManager cityManager,
+            ITownManager townManager,
+            INeighborhoodManager neighborhoodManager,
+            IFamilyManager familyManager)
         {
-            SqlHelper helper = new SqlHelper();
+            _housingManager = housingManager;
+            _cityManager = cityManager;
+            _townManager = townManager;
+            _neighborhoodManager = neighborhoodManager;
+            _familyManager = familyManager;
 
-            helper.command.CommandText = "SELECT TOP 1 Id FROM Towns WHERE Name = @p1";
-            helper.command.Parameters.AddWithValue("@p1", townName);
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    familyTownId = Convert.ToInt32(reader["Id"]);
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
+            InitializeComponent();
         }
 
-        private void FillNeig()
+        private void ClearHousingList() => cmbHousingList.Items.Clear();
+        private void ClearCityList() => cmbCities.Items.Clear();
+        private void ClearTownList() => cmbTowns.Items.Clear();
+        private void ClearNeighborhoodList() => cmbNeig.Items.Clear();
+
+
+        private int GetCurrentCityId()
         {
-            SqlHelper helper = new SqlHelper();
+            if (cmbCities.SelectedItem == null)
+                throw new Exception("Please, select a city!");
 
-            helper.command.CommandText = "SELECT Name FROM Neighborhoods WHERE TownId = @p1 ORDER BY Name";
-            helper.command.Parameters.AddWithValue("@p1", familyTownId);
+            int cityId = ((ComboBoxItem)cmbCities.SelectedItem).Value;
 
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                cmbNeig.Items.Clear();
-
-                while (reader.Read())
-                {
-                    cmbNeig.Items.Add(reader["Name"].ToString());
-                }
-            }
-
-            helper.connection.Close();
-            helper.connection.Dispose();
+            return cityId;
         }
 
-        private void FindNeigId()
+        private int GetCurrentTownId()
         {
-            SqlHelper helper = new SqlHelper();
+            if (cmbTowns.SelectedItem == null)
+                throw new Exception("Please, select a town!");
 
-            helper.command.CommandText = "SELECT TOP 1 Id FROM Neighborhoods WHERE Name = @p1 AND TownId=@p2";
+            int townId = ((ComboBoxItem)cmbTowns.SelectedItem).Value;
 
-            helper.command.Parameters.AddWithValue("@p1", cmbNeig.SelectedItem.ToString());
-            helper.command.Parameters.AddWithValue("@p1", familyTownId);
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    familyNeigId = Convert.ToInt32(reader["Id"]);
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
+            return townId;
         }
 
-        public void FillTowns()
+        private int GetCurrentNeighborhoodId()
         {
-            SqlHelper helper = new SqlHelper();
+            if (cmbNeig.SelectedItem == null)
+                throw new Exception("Please, select a neighborhood!");
 
-            helper.command.CommandText = "SELECT Name FROM Towns WHERE CityId = @cityId ORDER BY Name";
-            helper.command.Parameters.AddWithValue("@cityId", familyCityId);
+            int neighborhoodId = ((ComboBoxItem)cmbNeig.SelectedItem).Value;
 
-            helper.connection.Open();
+            return neighborhoodId;
+        }
 
-            OleDbDataReader reader = helper.command.ExecuteReader();
+        private void FillNeigByTownId(int townId)
+        {
+            ClearNeighborhoodList();
 
-            if (reader.HasRows)
+            var allNeighborhoods = _neighborhoodManager.GetAllASCByTownId(townId);
+
+            foreach (var item in allNeighborhoods)
             {
-                cmbTowns.Items.Clear();
-
-                while (reader.Read())
-                {
-                    cmbTowns.Items.Add(reader["Name"].ToString());
-                }
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbNeig.Items.Add(comboBoxItem);
             }
+        }
 
-            helper.connection.Close();
-            helper.connection.Dispose();
+        public void FillTownsByCityId(int cityId)
+        {
+            ClearTownList();
+
+            var allCities = _townManager.GetAllTownsASCByCityId(cityId);
+
+            foreach (var item in allCities)
+            {
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbTowns.Items.Add(comboBoxItem);
+            }
         }
 
         private void FillCities()
         {
-            SqlHelper helper = new SqlHelper();
+            ClearCityList();
 
-            helper.command.CommandText = "SELECT Name FROM Cities ORDER BY Name";
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
+            foreach (var item in _cityManager.GetAll())
             {
-                while (reader.Read())
-                {
-                    cmbCities.Items.Add(reader["Name"].ToString());
-                }
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbCities.Items.Add(comboBoxItem);
             }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-        }
-
-        private void FindCityId(string cityName)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT TOP 1 Id FROM Cities WHERE Name = @p1";
-            helper.command.Parameters.AddWithValue("@p1", cityName);
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    familyCityId = Convert.ToInt32(reader["Id"]);
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
         }
 
         public void FillHousingList()
         {
-            SqlHelper helper = new SqlHelper();
+            ClearHousingList();
 
-            helper.command.CommandText = "SELECT Id,Name FROM Housing";
+            var allHousingTypes = _housingManager.GetAll();
 
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
+            foreach (var item in allHousingTypes)
             {
-                while (reader.Read())
-                {
-                    housingList.Add(Convert.ToInt32(reader["Id"]), reader["Name"].ToString());
-                }
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbHousingList.Items.Add(comboBoxItem);
             }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-        }
-
-        public void FillCombobox()
-        {
-            foreach (var item in housingList)
-            {
-                cmbHousingList.Items.Add(item.Value);
-            }
-        }
-
-        public frmEditFamily()
-        {
-            InitializeComponent();
-
-            this.housingList = new Dictionary<int, string>();
         }
 
         private void frmEditFamily_Load(object sender, EventArgs e)
         {
-            FillHousingList();
-            FillCombobox();
+
         }
 
         private void txtTCNo_TextChanged(object sender, EventArgs e)
         {
-            if (txtTCNo.Text.Length == 11)
+            string txtFatherTCNo = txtTCNo.Text;
+
+            if (txtFatherTCNo.Length == 11)
             {
-                SqlHelper helper = new SqlHelper();
-                helper.command.CommandText = "SELECT TOP 1 " +
-                    "F.PersonCount as PersonCount," +
-                    "F.Priority as Priority," +
-                    "F.Address as Address," +
-                    "F.HousingId as HousingId," +
-                    "F.FatherNo as FatherNo," +
-                    "F.NeighborhoodsId as NeighborhoodsId," +
-                    "N.Name as NeigName," +
-                    "C.Id as CityId," +
-                    "C.Name as CityName," +
-                    "T.Id as TownId," +
-                    "T.Name as TownName " +
-                        "FROM (((Family as F INNER JOIN Neighborhoods as N ON F.NeighborhoodsId = N.Id)" +
-                        "INNER JOIN Towns as T ON N.TownId = T.Id)" +
-                        "INNER JOIN Cities AS C ON C.Id = T.CityId) WHERE FatherNo=@p1";
+                var isExists = _familyManager.FamilyExistsByFatherTCNo(txtFatherTCNo);
 
-                helper.command.Parameters.AddWithValue("@p1", txtTCNo.Text);
-
-                helper.connection.Open();
-
-                OleDbDataReader reader = helper.command.ExecuteReader();
-
-                if (!reader.HasRows)
+                if (!isExists)
                 {
                     MessageBox.Show("Böyle bir aile bulunmamaktadır!", "Uyarı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
-                else
+
+                btnUpdate.Enabled = true;
+                numPersonCount.Enabled = true;
+                cmbHousingList.Enabled = true;
+                cmbCities.Enabled = true;
+                cmbNeig.Enabled = true;
+                cmbTowns.Enabled = true;
+                numPriority.Enabled = true;
+                rchAddress.Enabled = true;
+
+                var familyWithAddress = _familyManager.GetFamilyWithAddressByFatherTCNo(txtFatherTCNo);
+
+
+                rchAddress.Text = familyWithAddress.Address;
+                numPersonCount.Value = familyWithAddress.PersonCount;
+                numPriority.Value = familyWithAddress.Priority;
+
+                FillHousingList();
+
+                FillCities();
+                FillTownsByCityId(familyWithAddress.CityId);
+                FillNeigByTownId(familyWithAddress.TownId);
+
+                foreach (ComboBoxItem city in cmbCities.Items)
                 {
-                    btnUpdate.Enabled = true;
-                    numPersonCount.Enabled = true;
-                    cmbHousingList.Enabled = true;
-                    cmbCities.Enabled = true;
-                    cmbNeig.Enabled = true;
-                    cmbTowns.Enabled = true;
-                    numPriority.Enabled = true;
-
-                    while (reader.Read())
+                    if (city.Value == familyWithAddress.CityId)
                     {
-                        numPersonCount.Value = Convert.ToInt32(reader["PersonCount"]);
-                        rchAddress.Text = reader["Address"].ToString();
-                        numPriority.Value = Convert.ToDecimal(reader["Priority"]);
-                        cmbHousingList.SelectedItem = housingList.FirstOrDefault(i => i.Key == Convert.ToInt32(reader["HousingId"])).Value;
-
-
-                        familyNeigId = (int)reader["NeighborhoodsId"];
-                        familyCityId = (int)reader["CityId"];
-                        familyTownId = (int)reader["TownId"];
-
-                        familyCityName = reader["CityName"].ToString();
-                        familyTownName = reader["TownName"].ToString();
-                        familyNeigName = reader["NeigName"].ToString();
-
+                        cmbCities.SelectedItem = city;
+                        break;
                     }
-
-                    cmbCities.Items.Clear();
-                    cmbNeig.Items.Clear();
-                    cmbTowns.Items.Clear();
-
-
-                    FillCities();
-                    cmbCities.SelectedItem = familyCityName;
-
-                    FillTowns();
-                    cmbTowns.SelectedItem = familyTownName;
-
-                    FillNeig();
-                    cmbNeig.SelectedItem = familyNeigName;
                 }
 
-                helper.connection.Close();
-                helper.connection.Dispose();
+                foreach (ComboBoxItem town in cmbTowns.Items)
+                {
+                    if (town.Value == familyWithAddress.TownId)
+                    {
+                        cmbTowns.SelectedItem = town;
+                        break;
+                    }
+                }
 
+                foreach (ComboBoxItem neighborhood in cmbNeig.Items)
+                {
+                    if (neighborhood.Value == familyWithAddress.NeighborhoodsId)
+                    {
+                        cmbNeig.SelectedItem = neighborhood;
+                        cmbNeig.SelectedItem = neighborhood;
+                        break;
+                    }
+                }
+
+                foreach (ComboBoxItem housing in cmbHousingList.Items)
+                {
+                    if (housing.Value == familyWithAddress.HousingId)
+                    {
+                        cmbHousingList.SelectedItem = housing;
+                        break;
+                    }
+                }
 
             }
             else
             {
                 numPersonCount.Value = 0;
-                cmbHousingList.SelectedItem = "";
-                btnUpdate.Enabled = false;
-                numPersonCount.Enabled = false;
+                numPriority.Value = 0;
+                rchAddress.Text = "";
+
+                ClearCityList();
+                ClearTownList();
+                ClearNeighborhoodList();
+                ClearHousingList();
+
+                cmbCities.Enabled = false;
+                cmbTowns.Enabled = false;
+                cmbNeig.Enabled = false;
                 cmbHousingList.Enabled = false;
+
+                rchAddress.Enabled = false;
+                numPersonCount.Enabled = false;
                 numPriority.Enabled = false;
+                btnUpdate.Enabled = false;
+
             }
         }
 
@@ -329,48 +239,30 @@ namespace kizilay
             if (cmbNeig.SelectedItem == null || string.IsNullOrEmpty(rchAddress.Text))
             {
                 MessageBox.Show("lütfen bütün alanları doldurunuz..", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                 return;
             }
-            try
+
+            Family family = new Family()
             {
-                FindNeigId();
+                FatherNo = txtTCNo.Text,
+                Address = rchAddress.Text,
+                NeighborhoodsId = GetCurrentNeighborhoodId(),
+                PersonCount = (int)numPersonCount.Value,
+                Priority = (int)numPriority.Value,
+                HousingId = ((ComboBoxItem)cmbHousingList.SelectedItem).Value
+            };
 
-                SqlHelper helper = new SqlHelper();
+            var layerResult = _familyManager.UpdateByFatherTCNo(family);
 
-                helper.connection.Open();
-
-                helper.command.CommandText = "UPDATE Family SET Priority=@p0, HousingId=@p1,PersonCount=@p2,Address=@p3,NeighborhoodsId=@p4 WHERE FatherNo=@p5";
-
-                helper.command.Parameters.AddWithValue("@p0", numPriority.Value);
-
-                helper.command.Parameters.AddWithValue("@p1", housingList.FirstOrDefault(i => i.Value == cmbHousingList.SelectedItem).Key);
-                helper.command.Parameters.AddWithValue("@p2", numPersonCount.Value);
-                helper.command.Parameters.AddWithValue("@p3", rchAddress.Text);
-                helper.command.Parameters.AddWithValue("@p4", familyNeigId);
-                helper.command.Parameters.AddWithValue("@p5", txtTCNo.Text);
-
-                int count = helper.command.ExecuteNonQuery();
-
-
-                helper.connection.Close();
-                helper.connection.Dispose();
-
-                if (count > 0)
-                {
-                    MessageBox.Show("Aile güncellemesi başarılı, yönlendiriliyorsunuz....", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Hide();
-                    this.Dispose();
-                }
-                else
-                {
-                    MessageBox.Show("Hiçbir kayıt etkinlenmedi, daha sonra tekrar deneyiniz...", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                }
-
+            if (layerResult.HasError())
+            {
+                MessageBox.Show(layerResult.Errors.FirstOrDefault(), "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message.ToString());
+                MessageBox.Show("Aile güncellemesi başarılı, yönlendiriliyorsunuz....", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.Hide();
+                this.Dispose();
             }
         }
 
@@ -378,12 +270,12 @@ namespace kizilay
         {
             if (cmbCities.SelectedIndex != -1)
             {
-                cmbTowns.Items.Clear();
-                cmbNeig.Items.Clear();
-                cmbTowns.Enabled = true;
+                int currentCityId = GetCurrentCityId();
 
-                FindCityId(cmbCities.SelectedItem.ToString());
-                FillTowns();
+                FillTownsByCityId(currentCityId);
+
+                cmbTowns.Enabled = true;
+                cmbNeig.Enabled = false;
             }
         }
 
@@ -391,11 +283,10 @@ namespace kizilay
         {
             if (cmbTowns.SelectedIndex != -1)
             {
-                cmbNeig.Items.Clear();
-                cmbNeig.Enabled = true;
+                int currentTownId = GetCurrentTownId();
+                FillNeigByTownId(currentTownId);
 
-                FindTownId(cmbTowns.SelectedItem.ToString());
-                FillNeig();
+                cmbNeig.Enabled = true;
             }
         }
 

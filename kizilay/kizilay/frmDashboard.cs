@@ -1,4 +1,10 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using kizilay.DependencyResolver.Ninject;
+using kizilay.Services.ExportService;
+using kizilay.Services.ExportService.Excel;
+using Kizilay.Business.Abstract;
+using Kizilay.Business.Concrete.Services.ImportService;
+using Kizilay.Business.Concrete.Services.ImportService.Excel;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Application = System.Windows.Forms.Application;
 using DataTable = System.Data.DataTable;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -17,112 +24,18 @@ namespace kizilay
 {
     public partial class frmDashboard : Form
     {
-        public frmDashboard()
+        private IPersonManager _personManager { get; set; }
+        private IImportService _importService { get; set; }
+
+        public frmDashboard(IPersonManager personManager, IImportService importService)
         {
+            _personManager = personManager;
+            _importService = importService;
+
             InitializeComponent();
         }
 
-        public System.Data.DataTable dataTable { get; set; }
-
-        public Thread thread { get; set; }
-
-        public Dictionary<int, string> educationalStatusList { get; set; }
-        public Dictionary<int, string> socialSecurityList { get; set; }
-        public Dictionary<int, string> homeTypeList { get; set; }
-
-       
-        public int FindTownId(string townName, int CityId)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT TOP 1 Id FROM Towns WHERE Name = @p1 AND CityId=@p2";
-            helper.command.Parameters.AddWithValue("@p1", townName);
-            helper.command.Parameters.AddWithValue("@p2", CityId);
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-            int TownId = 0;
-            
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    TownId = Convert.ToInt32(reader["Id"]);
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-
-            return TownId;
-        }
-
-        private int  FindNeigId(string NeighName, int TownId)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT TOP 1 Id FROM Neighborhoods WHERE Name = @p1 AND TownId=@p2";
-
-            helper.command.Parameters.AddWithValue("@p1", NeighName);
-            helper.command.Parameters.AddWithValue("@p2", TownId);
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            int NeigId = 0;
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    NeigId = Convert.ToInt32(reader["Id"]);
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-
-            return NeigId;
-        }
-
-        private int FindCityId(string cityName)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT TOP 1 Id FROM Cities WHERE Name = @p1";
-            helper.command.Parameters.AddWithValue("@p1", cityName);
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            int CityId = 0;
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    CityId = Convert.ToInt32(reader["Id"]);
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-
-            return CityId;
-        }
-
-        public void StartImport()
+        public async void StartImport()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
@@ -130,338 +43,52 @@ namespace kizilay
 
             if (result == DialogResult.Yes || result == DialogResult.OK)
             {
-                FillSocialSecurityList();
-                FillEducationalStatusList();
+                string fileName = fileDialog.FileName;
 
-                DataTable list = new ReadExcel(fileDialog.FileName).ReadXml();
+                var dataTable = ((IReadableFile)_importService).ReadFile(fileName);
 
-                int counter = 0;
-
-                for (int i = 0; i < list.Rows.Count; i++)
-                {
-                    try
+                _importService.ImportAsync(dataTable)
+                    .ContinueWith((invalidDataList) =>
                     {
-                        if (!PersonExist(list.Rows[i]["TC"].ToString()))
+                        if (invalidDataList.Result != null && invalidDataList.Result.Rows.Count > 0)
                         {
-                            int familyId = GetFamilyId(list.Rows[i]["FatherNo"].ToString());
+                            string message = $"Yüklenemeyen {invalidDataList.Result.Rows.Count} satır kayıt var. Bunları indirmek ister misiniz?";
 
-                            if (familyId == 0)
+                            var messageResult = MessageBox.Show(message, "Bilgi?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                            if (messageResult == DialogResult.Yes)
                             {
-                                //string FatherNo, int Priority, int NeighborhoodsId, string Address
-                                string FatherNo = list.Rows[i]["FatherNo"].ToString();
-                                string Address = list.Rows[i]["Address"].ToString();
-                                int Priority = Convert.ToInt32(list.Rows[i]["Priority"]);
-
-
-                                int CityId = FindCityId(list.Rows[i]["CityName"].ToString());
-                                int TownId = FindTownId(list.Rows[i]["TownName"].ToString(), CityId);
-                                int NeighborhoodsId = FindNeigId(list.Rows[i]["NeighborhoodsName"].ToString(), TownId);
-                                //int NeighborhoodsId = 1377;
-                                
-
-
-
-                                if (!CreateNewFamily(FatherNo,Priority,NeighborhoodsId,Address))
-                                {
-                                    break;
-                                }
+                                string applicationPath = Application.StartupPath;
+                                WriteDataTableToExcelAsync(applicationPath, invalidDataList.Result);
                             }
-
-                            familyId = GetFamilyId(list.Rows[i]["FatherNo"].ToString());
-
-                            PersonModel model = new PersonModel();
-
-                            bool jobstate = list.Rows[i]["JobState"].ToString().ToLower() == "çalışmıyor" ? false : true;
-                            bool gender = list.Rows[i]["Gender"].ToString().ToLower() == "erkek" ? true : false;
-
-                            int educationalStatusId = educationalStatusList.Values.Contains(list.Rows[i]["EducationalStatusName"].ToString()) ? educationalStatusList.Where(k => k.Value == list.Rows[i]["EducationalStatusName"].ToString()).Select(k => k.Key).FirstOrDefault() : educationalStatusList.Where(k => k.Value.ToLower() == "ilköğretim").Select(k => k.Key).FirstOrDefault();
-
-                            int socialSecurityId = socialSecurityList.Values.Contains(list.Rows[i]["SocialSecurityName"].ToString()) ? socialSecurityList.Where(k => k.Value == list.Rows[i]["SocialSecurityName"].ToString()).Select(k => k.Key).FirstOrDefault() : socialSecurityList.Where(k => k.Value.ToLower() == "yok").Select(k => k.Key).FirstOrDefault();
-
-
-                            model = new PersonModel()
-                            {
-                                TC = list.Rows[i]["TC"].ToString(),
-                                Citizenship = list.Rows[i]["Citizenship"].ToString(),
-                                Name = list.Rows[i]["Name"].ToString(),
-                                Surname = list.Rows[i]["Surname"].ToString(),
-                                BirthDate = list.Rows[i]["BirthDate"].ToString(),
-                                PlaceOfBirth = list.Rows[i]["PlaceOfBirth"].ToString(),
-                                Gender = gender,
-                                JobState = jobstate,
-                                JobDescription = list.Rows[i]["JobDescription"].ToString(),
-                                Salary = Convert.ToInt32(list.Rows[i]["Salary"]),
-                                MobilePhone = list.Rows[i]["MobilePhone"].ToString(),
-                                HomePhone = list.Rows[i]["HomePhone"].ToString(),
-                                Address = list.Rows[i]["Address"].ToString(),
-                                MotherName = list.Rows[i]["MotherName"].ToString(),
-                                FatherName = list.Rows[i]["FatherName"].ToString(),
-                                isMarried = list.Rows[i]["isMarried"].ToString(),
-                                EducationalStatusName = educationalStatusId,
-                                SocialSecurity = socialSecurityId,
-                                FamilyId = familyId
-                            };
-
-                            AddNewPerson(model);
-                            model = null;
                         }
                         else
                         {
-                            counter++;
+                            if (invalidDataList.Result.Rows.Count == 0)
+                            {
+                                MessageBox.Show("Kayıtlar başarıyla aktarıldı!");
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        counter++;
-                    }
-                }
-                MessageBox.Show($"{list.Rows.Count - counter} adet kayıt eklendi, {counter} adet kayıt eklenemedi..");
+                        dataTable.Dispose();
+                    });
             }
             else
             {
                 MessageBox.Show("Lütfen import yapacak dosyayı seçiniz...", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
-            thread = null;
         }
 
-        public void FillSocialSecurityList()
+        private void WriteDataTableToExcelAsync(string path, DataTable dataTable)
         {
-            socialSecurityList = new Dictionary<int, string>();
+            IExportService export = new ExcelExportService();
 
-            SqlHelper helper = new SqlHelper();
-            helper.command.CommandText = "SELECT Id,Name FROM SocialSecurity";
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                socialSecurityList.Add((int)reader["Id"], reader["Name"].ToString());
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-        }
-
-        public void FillEducationalStatusList()
-        {
-            educationalStatusList = new Dictionary<int, string>();
-
-            SqlHelper helper = new SqlHelper();
-            helper.command.CommandText = "SELECT Id,Name FROM EducationalStatus";
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                educationalStatusList.Add((int)reader["Id"], reader["Name"].ToString());
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-        }
-
-        public bool PersonExist(string TC)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT TC FROM Person WHERE TC=@p1";
-            helper.command.Parameters.AddWithValue("@p1", TC);
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            bool exist = false;
-            if (reader.HasRows)
-            {
-                exist = true;
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-            return exist;
-        }
-
-        public int GetFamilyId(string FatherNo)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT Id FROM Family WHERE FatherNo=@p1";
-
-            helper.command.Parameters.AddWithValue("@p1", FatherNo);
-
-            int familyId = 0;
-
-            try
-            {
-                helper.connection.Open();
-
-
-                OleDbDataReader reader = helper.command.ExecuteReader();
-
-                if (reader.HasRows)
+            export.ExportAsync(path, dataTable)
+                .ContinueWith(task =>
                 {
-                    while (reader.Read())
-                    {
-                        familyId = Convert.ToInt32(reader[0]);
-                        break;
-                    }
-                }
+                    MessageBox.Show("Kayıtlar başarıyla dışarıya aktarıldı..", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    dataTable.Dispose();
+                });
 
-                helper.connection.Close();
-                helper.connection.Dispose();
-
-            }
-            catch (Exception)
-            {
-
-            }
-
-            return familyId;
-        }
-
-        public bool CreateNewFamily(string FatherNo, int Priority, int NeighborhoodsId, string Address)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "INSERT INTO Family (HousingId,FatherNo,PersonCount,Priority,NeighborhoodsId,Address) values(1,@p2,3,@p4,@p5,@p6)";
-
-            helper.command.Parameters.AddWithValue("@p2", FatherNo);
-            helper.command.Parameters.AddWithValue("@p4", Priority);
-            helper.command.Parameters.AddWithValue("@p5", NeighborhoodsId);
-            helper.command.Parameters.AddWithValue("@p6", Address);
-
-            bool result;
-
-            try
-            {
-                helper.connection.Open();
-
-                result = helper.command.ExecuteNonQuery() == 1 ? true : false;
-
-                helper.connection.Close();
-                helper.connection.Dispose();
-            }
-
-            catch (Exception)
-            {
-                result = false;
-            }
-
-            return result;
-        }
-
-        public void AddNewPerson(PersonModel model)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "INSERT INTO Person (TC, Citizenship, Name, Surname, BirthDate, PlaceOfBirth, Gender, JobState, JobDescription, Salary, MobilePhone, HomePhone, MotherName, FatherName, isMarried, EducationalStatus, SocialSecurityId, FamilyId) values(@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12,@p14,@p15,@16,@p17,@p18,@p19)";
-
-            helper.command.Parameters.AddWithValue("@p1", model.TC.ToString());
-            helper.command.Parameters.AddWithValue("@p2", model.Citizenship);
-            helper.command.Parameters.AddWithValue("@p3", model.Name);
-            helper.command.Parameters.AddWithValue("@p4", model.Surname);
-            helper.command.Parameters.AddWithValue("@p5", model.BirthDate);
-            helper.command.Parameters.AddWithValue("@p6", model.PlaceOfBirth);
-            helper.command.Parameters.AddWithValue("@p7", model.Gender);
-            helper.command.Parameters.AddWithValue("@p8", model.JobState);
-            helper.command.Parameters.AddWithValue("@p9", model.JobDescription);
-            helper.command.Parameters.AddWithValue("@p10", model.Salary);
-            helper.command.Parameters.AddWithValue("@p11", model.MobilePhone);
-            helper.command.Parameters.AddWithValue("@p12", model.HomePhone);
-            helper.command.Parameters.AddWithValue("@p14", model.MotherName);
-            helper.command.Parameters.AddWithValue("@p15", model.FatherName);
-            helper.command.Parameters.AddWithValue("@p16", model.isMarried);
-            helper.command.Parameters.AddWithValue("@p17", model.EducationalStatusName);
-            helper.command.Parameters.AddWithValue("@p18", model.SocialSecurity);
-            helper.command.Parameters.AddWithValue("@p19", model.FamilyId);
-
-            helper.connection.Open();
-
-            helper.command.ExecuteNonQuery();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-        }
-
-        public void FillAllPerson()
-        {
-            dataTable = new System.Data.DataTable();
-
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT " +
-                "P.TC," +
-                "P.Citizenship," +
-                "P.Name," +
-                "P.Surname," +
-                "P.BirthDate," +
-                "P.PlaceOfBirth," +
-                "C.Name as CityName," +
-                "T.Name as TownName," +
-                "N.Name as NeighborhoodsName," +
-                "F.Address," +
-                "Replace(Replace(P.Gender,0,'Kadın'), 1, 'Erkek') as Gender," +
-                "Replace(Replace(P.JobState,0,'Çalışmıyor'), 1, 'Çalışıyor') as JobState," +
-                "P.JobDescription," +
-                "P.Salary," +
-                "P.MobilePhone," +
-                "P.HomePhone," +
-                "P.MotherName," +
-                "P.FatherName," +
-                "P.isMarried," +
-                "ES.Name as EducationalStatusName," +
-                "SS.Name as SocialSecurityName," +
-                "F.Priority," +
-                "F.FatherNo as FatherNo " +
-                "FROM  (" +
-                "        (" +
-                "          (" +
-                "            (" +
-                "              (" +
-                "                (" +
-                "                   Person as P " +
-                "                       INNER JOIN EducationalStatus as ES ON P.EducationalStatus = ES.Id) " +
-                "                          INNER JOIN SocialSecurity as SS ON P.SocialSecurityId = SS.Id) " +
-                "                               INNER JOIN Family as F ON F.Id = P.FamilyId) " +
-                "                                   INNER JOIN Neighborhoods as N ON N.Id = F.NeighborhoodsId) " +
-                "                                       INNER JOIN Towns as T ON T.Id = N.TownId) " +
-                "                                           INNER JOIN Cities as C ON C.Id = T.CityId)";
-
-            helper.connection.Open();
-
-            OleDbDataAdapter adapter = new OleDbDataAdapter(helper.command);
-
-            adapter.Fill(dataTable);
-
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            {
-                dataTable.Rows[i]["Gender"] = dataTable.Rows[i]["Gender"].ToString().Trim('-');
-                dataTable.Rows[i]["JobState"] = dataTable.Rows[i]["JobState"].ToString().Trim('-');
-            }
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-
-        }
-
-        private bool WriteToExcel(string path)
-        {
-            WriteDataToExcel write = new WriteDataToExcel(dataTable, path);
-            return write.WriteToExcel() ? true : false;
         }
 
         private void frmDashboard_FormClosing(object sender, FormClosingEventArgs e)
@@ -471,37 +98,36 @@ namespace kizilay
 
         private void btnSocialSecurity_Click(object sender, EventArgs e)
         {
-            new frmSocialSecurity().ShowDialog();
+            FormDependencyResolver.Resolve<frmSocialSecurity>().ShowDialog();
         }
 
         private void btnEducational_Click(object sender, EventArgs e)
         {
-            new frmEducationalStatus().ShowDialog();
+            FormDependencyResolver.Resolve<frmEducationalStatus>().ShowDialog();
         }
 
         private void btnHousing_Click(object sender, EventArgs e)
         {
-            new frmHousing().ShowDialog();
+            FormDependencyResolver.Resolve<frmHousing>().ShowDialog();
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-            new frmEditPassword().ShowDialog();
+            FormDependencyResolver.Resolve<frmEditPassword>().ShowDialog();
         }
 
         private void btnFamily_Click(object sender, EventArgs e)
         {
-            new frmFamilyDashboard().ShowDialog();
+            FormDependencyResolver.Resolve<frmFamilyDashboard>().Show();
         }
 
         private void btnDonation_Click(object sender, EventArgs e)
         {
-            new frmDonateDashboard().Show();
+            FormDependencyResolver.Resolve<frmDonateDashboard>().Show();
         }
 
         private void btnExport_Click(object sender, EventArgs e)
         {
-
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             DialogResult result = folderBrowserDialog.ShowDialog();
 
@@ -509,24 +135,24 @@ namespace kizilay
             {
                 string path = folderBrowserDialog.SelectedPath;
 
-                FillAllPerson();
+                var dataTable = _personManager.GetAllPersonInformationForExport();
 
-                if (WriteToExcel(path))
+                for (int i = 0; i < dataTable.Rows.Count; i++)
                 {
-                    MessageBox.Show("Data başarıyla dışarı çıkartıldı..");
+                    dataTable.Rows[i]["Gender"] = dataTable.Rows[i]["Gender"].ToString().Trim('-');
+                    dataTable.Rows[i]["JobState"] = dataTable.Rows[i]["JobState"].ToString().Trim('-');
                 }
+
+                WriteDataTableToExcelAsync(path, dataTable);
             }
             else
-            {
                 MessageBox.Show("Lütfen bir konum seçiniz...");
-            }
 
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
-            thread = new Thread(new ThreadStart(StartImport)) { ApartmentState = ApartmentState.STA };
-            thread.Start();
+            StartImport();
         }
     }
 }

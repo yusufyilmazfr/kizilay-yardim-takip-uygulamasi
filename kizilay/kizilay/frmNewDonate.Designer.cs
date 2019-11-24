@@ -121,7 +121,7 @@
             // 
             this.btnCreate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCreate.Enabled = false;
-            this.btnCreate.Location = new System.Drawing.Point(285, 372);
+            this.btnCreate.Location = new System.Drawing.Point(285, 373);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(247, 37);
             this.btnCreate.TabIndex = 5;
@@ -194,6 +194,7 @@
             this.Name = "frmNewDonate";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Bağış yapma ekranı..";
+            this.Load += new System.EventHandler(this.frmNewDonate_Load);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);

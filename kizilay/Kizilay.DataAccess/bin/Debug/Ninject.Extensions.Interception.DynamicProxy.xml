@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ninject.Extensions.Interception.DynamicProxy</name>
+    </assembly>
+    <members>
+        <member name="T:Ninject.Extensions.Interception.DynamicProxyModule">
+            <summary>
+            Extends the functionality of the kernel, providing a proxy factory that uses Castle DynamicProxy2
+            to generate dynamic proxies.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.DynamicProxyModule.Load">
+            <summary>
+            Loads the module into the kernel.
+            </summary>
+        </member>
+        <member name="T:Ninject.Extensions.Interception.ProxyFactory.DynamicProxyProxyFactory">
+            <summary>
+            An implementation of a proxy factory that uses a Castle DynamicProxy2 <see cref="T:Castle.DynamicProxy.ProxyGenerator"/>
+            and <see cref="T:Ninject.Extensions.Interception.Wrapper.DynamicProxyWrapper"/>s to create wrapped instances.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.DynamicProxyProxyFactory.#ctor(Ninject.IKernel)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ninject.Extensions.Interception.ProxyFactory.DynamicProxyProxyFactory"/> class.
+            </summary>
+            <param name="kernel">The kernel.</param>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.DynamicProxyProxyFactory.Kernel">
+            <summary>
+            Gets the kernel.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.DynamicProxyProxyFactory.Dispose(System.Boolean)">
+            <summary>
+            Releases all resources held by the object.
+            </summary>
+            <param name="disposing"><see langword="True"/> if managed objects should be disposed, otherwise <see langword="false"/>.</param>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.DynamicProxyProxyFactory.Wrap(Ninject.Activation.IContext,Ninject.Activation.InstanceReference)">
+            <summary>
+            Wraps the specified instance in a proxy.
+            </summary>
+            <param name="context">The context in which the instance was activated.</param>
+            <param name="reference">The <see cref="T:Ninject.Activation.InstanceReference"/> to wrap.</param>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.DynamicProxyProxyFactory.Unwrap(Ninject.Activation.IContext,Ninject.Activation.InstanceReference)">
+            <summary>
+            Unwraps the specified proxied instance.
+            </summary>
+            <param name="context">The context in which the instance was activated.</param>
+            <param name="reference">The <see cref="T:Ninject.Activation.InstanceReference"/> to unwrap.</param>
+        </member>
+        <member name="T:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation">
+            <summary>
+            Represents the invocation on object methods.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.#ctor(System.Object,System.Object,System.Reflection.MethodInfo,System.Object[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation"/> class.
+            </summary>
+            <param name="proxy">The proxy instance.</param>
+            <param name="target">The target instance.</param>
+            <param name="method">The method info.</param>
+            <param name="arguments">The arguments.</param>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.Arguments">
+            <summary>
+            Gets the arguments.
+            </summary>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.GenericArguments">
+            <summary>
+            Gets the generic argument types.
+            </summary>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.InvocationTarget">
+            <summary>
+            Gets the invocation target.
+            </summary>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.Method">
+            <summary>
+            Gets the method info.
+            </summary>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.MethodInvocationTarget">
+            <summary>
+            Gets the method invocation target.
+            </summary>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.Proxy">
+            <summary>
+            Gets the proxy instance.
+            </summary>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.ReturnValue">
+            <summary>
+            Gets or sets the return value.
+            </summary>
+        </member>
+        <member name="P:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.TargetType">
+            <summary>
+            Gets the target type.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.GetArgumentValue(System.Int32)">
+            <summary>
+            Gets the argument value.
+            </summary>
+            <param name="index">The argument index.</param>
+            <returns>The argument value.</returns>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.GetConcreteMethod">
+            <summary>
+            Gets the concrete method info.
+            </summary>
+            <returns>The concrete method info.</returns>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.GetConcreteMethodInvocationTarget">
+            <summary>
+            Gets the concrete method invocation target.
+            </summary>
+            <returns>The concrete method invocation target.</returns>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.Proceed">
+            <summary>
+            Proceeds the invocation.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ObjectMethodsInvocation.SetArgumentValue(System.Int32,System.Object)">
+            <summary>
+            Sets the argument value.
+            </summary>
+            <param name="index">The argument index.</param>
+            <param name="value">The argument value.</param>
+        </member>
+        <member name="T:Ninject.Extensions.Interception.ProxyFactory.ProxyBase">
+            <summary>
+            The proxy base.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ProxyBase.GetHashCode">
+            <summary>
+            Intercepts the <c>GetHashCode</c> method using object's <c>GetHashCode</c> method.
+            </summary>
+            <returns>The hash code.</returns>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ProxyBase.ToString">
+            <summary>
+            Intercepts the <c>ToString</c> method using object's <c>ToString</c> method.
+            </summary>
+            <returns>The string.</returns>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.ProxyFactory.ProxyBase.Equals(System.Object)">
+            <summary>
+            Intercepts the <c>Equals</c> method using object's <c>Equals</c> method.
+            </summary>
+            <param name="obj">The object to compare.</param>
+            <returns><c>True</c> if the two equals, otherwise <c>False</c>.</returns>
+        </member>
+        <member name="T:Ninject.Extensions.Interception.Wrapper.DynamicProxyWrapper">
+            <summary>
+            Defines an interception wrapper that can convert a Castle DynamicProxy2 <see cref="T:Castle.DynamicProxy.IInvocation"/>
+            into a Ninject <see cref="T:Ninject.Activation.IRequest"/> for interception.
+            </summary>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.Wrapper.DynamicProxyWrapper.#ctor(Ninject.IKernel,Ninject.Activation.IContext,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ninject.Extensions.Interception.Wrapper.DynamicProxyWrapper"/> class.
+            </summary>
+            <param name="kernel">The kernel associated with the wrapper.</param>
+            <param name="context">The context in which the instance was activated.</param>
+            <param name="instance">The wrapped instance.</param>
+        </member>
+        <member name="M:Ninject.Extensions.Interception.Wrapper.DynamicProxyWrapper.Intercept(Castle.DynamicProxy.IInvocation)">
+            <summary>
+            Intercepts the specified invocation.
+            </summary>
+            <param name="castleInvocation">The invocation.</param>
+        </member>
+    </members>
+</doc>

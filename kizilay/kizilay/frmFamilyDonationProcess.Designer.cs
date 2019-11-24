@@ -35,6 +35,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnEdit = new System.Windows.Forms.Button();
+            this.btnRemoveDonate = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
@@ -86,10 +87,11 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnRemoveDonate);
             this.groupBox1.Controls.Add(this.btnEdit);
             this.groupBox1.Location = new System.Drawing.Point(3, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(171, 100);
+            this.groupBox1.Size = new System.Drawing.Size(171, 150);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "İşlemler";
@@ -105,6 +107,18 @@
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
+            // btnRemoveDonate
+            // 
+            this.btnRemoveDonate.BackColor = System.Drawing.Color.Red;
+            this.btnRemoveDonate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRemoveDonate.Location = new System.Drawing.Point(6, 82);
+            this.btnRemoveDonate.Name = "btnRemoveDonate";
+            this.btnRemoveDonate.Size = new System.Drawing.Size(159, 38);
+            this.btnRemoveDonate.TabIndex = 1;
+            this.btnRemoveDonate.Text = "Bağış Sil";
+            this.btnRemoveDonate.UseVisualStyleBackColor = false;
+            this.btnRemoveDonate.Click += new System.EventHandler(this.btnRemoveDonate_Click);
+            // 
             // frmFamilyDonationProcess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -115,6 +129,7 @@
             this.Name = "frmFamilyDonationProcess";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Bağış Sürecini Görüntüle";
+            this.Load += new System.EventHandler(this.frmFamilyDonationProcess_Load);
             this.panel1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
@@ -132,5 +147,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.Button btnRemoveDonate;
     }
 }

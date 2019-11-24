@@ -1,4 +1,8 @@
-﻿using System;
+﻿using kizilay.DependencyResolver.Ninject;
+using kizilay.Item;
+using Kizilay.Business.Abstract;
+using Kizilay.Entities.Concrete;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,58 +17,59 @@ namespace kizilay
 {
     public partial class frmNewDonate : Form
     {
-        public List<DonationModel> DonationList { get; set; }
-        public List<DonationProcessModel> donationProcesses { get; set; }
+        private IDonationManager _donationManager { get; set; }
+        private IPersonDonationManager _personDonationManager { get; set; }
+        private IPersonManager _personManager { get; set; }
+        private IFamilyManager _familyManager { get; set; }
 
-        public int PersonId { get; set; }
 
-        public void GetDonationList()
+        public frmNewDonate(IPersonDonationManager personDonationManager,
+            IDonationManager donationManager,
+            IPersonManager personManager,
+            IFamilyManager familyManager)
         {
-            SqlHelper helper = new SqlHelper();
+            _personDonationManager = personDonationManager;
+            _donationManager = donationManager;
+            _personManager = personManager;
+            _familyManager = familyManager;
 
-            helper.command.CommandText = "SELECT * FROM Donation";
+            InitializeComponent();
+        }
 
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    DonationList.Add(new DonationModel()
-                    {
-                        Id = (int)reader["Id"],
-                        Name = reader["Name"].ToString(),
-                        ParentId = (int)reader["DonationId"]
-                    });
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
+        private void frmNewDonate_Load(object sender, EventArgs e)
+        {
+            FillDonationTypeList();
         }
 
         public void FillDonationTypeList()
         {
-            foreach (DonationModel model in DonationList.Where(i => i.ParentId == 0))
+            var allParentDonationList = _donationManager.GetAll().Where(i => i.DonationID == 0);
+
+            foreach (Donation item in allParentDonationList)
             {
-                cmbDonateType.Items.Add(model.Name);
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbDonateType.Items.Add(comboBoxItem);
             }
         }
 
-        public void FillDonationNameList(string Name)
+        public int GetCurrentDonationTypeId()
+        {
+            return ((ComboBoxItem)cmbDonateType.SelectedItem).Value;
+        }
+
+        public void ClearDonationNameList()
         {
             cmbDonateName.Items.Clear();
+        }
 
-            int parentId = DonationList.Where(i => i.Name == Name).Select(i => i.Id).FirstOrDefault();
+        public void FillDonationNameListByParentId(int parentId)
+        {
+            var donationNameList = _donationManager.GetAll().Where(i => i.DonationID == parentId);
 
-            foreach (DonationModel model in DonationList.Where(i => i.ParentId == parentId))
+            foreach (Donation item in donationNameList)
             {
-                cmbDonateName.Items.Add(model.Name);
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbDonateName.Items.Add(comboBoxItem);
             }
         }
 
@@ -139,73 +144,41 @@ namespace kizilay
             return FamilyId;
         }
 
-        public frmNewDonate()
-        {
-            InitializeComponent();
-
-            DonationList = new List<DonationModel>();
-            donationProcesses = new List<DonationProcessModel>();
-
-            GetDonationList();
-            FillDonationTypeList();
-        }
-
         private void txtTcNo_TextChanged(object sender, EventArgs e)
         {
-            if (txtTcNo.Text.Length == 11)
+            string personTCNo = txtTcNo.Text;
+
+            if (personTCNo.Length == 11)
             {
-                if (GetAllPerson(txtTcNo.Text).Rows.Count > 0)
-                {
-                    btnCreate.Enabled = true;
+                bool isExists = _personManager.PersonExistsByTCNo(personTCNo);
 
-                    DataTable dataTable = GetAllPerson(GetFamilyId(txtTcNo.Text));
-
-                    if (dataTable.Rows.Count > 0)
-                    {
-                        DateTime lastDate;
-                        TimeSpan rangeOfDate;
-
-                        for (int i = 0; i < dataTable.Rows.Count; i++)
-                        {
-
-                            lastDate = Convert.ToDateTime(dataTable.Rows[i]["AddedDate"].ToString());
-
-                            rangeOfDate = DateTime.Now.Subtract(lastDate);
-
-                            if (rangeOfDate.Days < 360)
-                            {
-                                DialogResult result = MessageBox.Show("Son 1 yıl içerisinde bu aile yardım almıştır. Aileye ait yardım kayıtlarını görmek ister misiniz?", "Bilgi", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                                if (result == DialogResult.Yes)
-                                {
-                                    donationProcesses.Clear();
-                                    for (int j = 0; j < dataTable.Rows.Count; j++)
-                                    {
-                                        donationProcesses.Add(new DonationProcessModel()
-                                        {
-                                            // Name kolonu hatalı..
-                                            donationId = Convert.ToInt32(dataTable.Rows[j][26]),
-                                            DonationName = dataTable.Rows[j][32].ToString(),
-                                            PersonName = dataTable.Rows[j][3].ToString(),
-                                            PersonLastName = dataTable.Rows[j]["Surname"].ToString(),
-                                            Description = dataTable.Rows[j]["Description"].ToString(),
-                                            DonationDate = (DateTime)dataTable.Rows[j]["AddedDate"]
-                                        });
-                                    }
-
-                                    new frmFamilyDonationProcess(donationProcesses).Show();
-                                    return;
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-                else
+                if (!isExists)
                 {
                     MessageBox.Show("Böyle bir personel bulunmamaktadır...", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                    return;
                 }
+
+                int familyId = _personManager.GetByTCNo(personTCNo).FamilyId;
+
+                bool hasDonation = _familyManager.FamilyHasDonationInRangeDayByFamilyId(familyId, 365);
+
+                if (hasDonation)
+                {
+                    DialogResult result = MessageBox.Show("Son 1 yıl içerisinde bu aile yardım almıştır. Aileye ait yardım kayıtlarını görmek ister misiniz?", "Bilgi", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        var donationProcess = (frmFamilyDonationProcess)FormDependencyResolver.Resolve<frmFamilyDonationProcess>();
+
+                        //this base will be refactor!!
+
+                        donationProcess.familyId = _personManager.GetByTCNo(personTCNo).FamilyId;
+
+                        donationProcess.Show();
+                    }
+                }
+
+                btnCreate.Enabled = true;
             }
         }
 
@@ -219,7 +192,11 @@ namespace kizilay
 
         private void cmbDonateType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FillDonationNameList(cmbDonateType.SelectedItem.ToString());
+            ClearDonationNameList();
+
+            int donationTypeId = GetCurrentDonationTypeId();
+
+            FillDonationNameListByParentId(donationTypeId);
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
@@ -230,44 +207,36 @@ namespace kizilay
                 return;
             }
 
-            SqlHelper helper = new SqlHelper();
-
-            int donationId = DonationList.Where(i => i.Name == cmbDonateName.SelectedItem.ToString() && i.ParentId != 0).Select(i => i.Id).FirstOrDefault();
-
-            string date = dtPicker.Value.ToShortDateString();
-
-            int PersonId = (int)GetAllPerson(txtTcNo.Text).Rows[0]["Id"];
-
-            string description = rchDescription.Text;
-
-            helper.command.CommandText = "INSERT INTO Person_Donation (PersonId,DonationId,AddedDate,Description) values(@p1,@p2,@p3,@p4)";
-
-            helper.command.Parameters.AddWithValue("@p1", PersonId);
-            helper.command.Parameters.AddWithValue("@p2", donationId);
-            helper.command.Parameters.AddWithValue("@p3", date);
-            helper.command.Parameters.AddWithValue("@p4", description);
-
-
-            helper.connection.Open();
-
-            try
+            Person_Donation donation = new Person_Donation
             {
-                helper.command.ExecuteNonQuery();
+                Description = rchDescription.Text,
+                DonationId = GetCurrentDonationNameId(),
+                AddedDate = dtPicker.Value.Date,
+                PersonId = _personManager.GetByTCNo(txtTcNo.Text).Id
+            };
 
+
+            var layerResult = _personDonationManager.Add(donation);
+
+            if (!layerResult.HasError())
+            {
                 MessageBox.Show("Yardım işlemi başarılı bir şekilde yapıldı :), yönlendiriliyorsunuz...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                DialogResult = DialogResult.Yes;
 
                 this.Hide();
                 this.Dispose();
-
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show(ex.Message.ToString());
+                var firstError = layerResult.Errors.FirstOrDefault();
+                MessageBox.Show(firstError, "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
+        }
 
-            helper.connection.Close();
-            helper.connection.Dispose();
-
+        private int GetCurrentDonationNameId()
+        {
+            return ((ComboBoxItem)cmbDonateName.SelectedItem).Value;
         }
     }
 }

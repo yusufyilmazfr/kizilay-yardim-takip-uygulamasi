@@ -1,4 +1,5 @@
-﻿using System;
+﻿using kizilay.DependencyResolver.Ninject;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,15 +25,14 @@ namespace kizilay
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            this.Opacity -= .05;
-            if (this.Opacity == 0)
+            this.Opacity -= .04;
+
+            if (this.Opacity <= 0)
             {
                 timer1.Stop();
 
-                new frmAccountLogin().Show();
-
-                this.Hide();
-
+                var form = FormDependencyResolver.Resolve<frmAccountLogin>();
+                form.Show();
             }
         }
     }

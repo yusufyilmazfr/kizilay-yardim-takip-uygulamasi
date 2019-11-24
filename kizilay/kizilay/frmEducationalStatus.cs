@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Kizilay.Business.Abstract;
+using Kizilay.Entities.Concrete;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,46 +15,28 @@ namespace kizilay
 {
     public partial class frmEducationalStatus : Form
     {
-        private DataTable dataTable { get; set; }
+        private IEducationalStatusManager _educationalStatusManager { get; set; }
 
-        public frmEducationalStatus()
+        public frmEducationalStatus(IEducationalStatusManager educationalStatusManager)
         {
+            _educationalStatusManager = educationalStatusManager;
+
             InitializeComponent();
-
-            dataTable = new DataTable();
-        }
-
-        public void FillDataTable()
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT * FROM EducationalStatus";
-
-            helper.connection.Open();
-
-            OleDbDataAdapter adapter = new OleDbDataAdapter(helper.command);
-            adapter.Fill(this.dataTable);
-
-            helper.connection.Close();
-            helper.connection.Dispose();
         }
 
         public void FillDataGridView()
         {
-            this.dataGridView.DataSource = this.dataTable;
+            dataGridView.DataSource = _educationalStatusManager.GetAll();
         }
 
         public void ClearAllBase()
         {
             txtId.Text = "";
             txtName.Text = "";
-            dataTable.Clear();
-            dataGridView.DataSource = null;
         }
 
         private void frmEducationalStatus_Load(object sender, EventArgs e)
         {
-            FillDataTable();
             FillDataGridView();
         }
 
@@ -62,143 +46,96 @@ namespace kizilay
 
             if (row.Index != -1)
             {
-                txtId.Text = row.Cells[0].Value.ToString();
-                txtName.Text = row.Cells[1].Value.ToString();
+                txtId.Text = row.Cells["Id"].Value.ToString();
+                txtName.Text = row.Cells["Name"].Value.ToString();
             }
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
             ClearAllBase();
-            FillDataGridView();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
             string Id = txtId.Text;
 
-            if (!string.IsNullOrEmpty(Id))
-            {
-                DialogResult result = MessageBox.Show("Seçili eğitim türü kaydını silmek istediğinize emin misiniz?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (String.IsNullOrEmpty(Id))
+                return;
 
-                if (result == DialogResult.Yes)
+            DialogResult dialogResult = MessageBox.Show("Seçili eğitim türü kaydını silmek istediğinize emin misiniz?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                int id = Convert.ToInt32(Id);
+
+                var result = _educationalStatusManager.RemoveById(id);
+
+                if (result.HasError())
                 {
-                    try
-                    {
-                        SqlHelper helper = new SqlHelper();
+                    string firstError = result.Errors.FirstOrDefault();
 
-                        helper.command.CommandText = string.Format("DELETE FROM EducationalStatus WHERE Id={0}", Id);
-
-                        helper.connection.Open();
-
-                        helper.command.ExecuteNonQuery();
-
-                        MessageBox.Show("Silme işlemi başarıyla yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        helper.connection.Close();
-                        helper.connection.Dispose();
-
-                        ClearAllBase();
-                        FillDataTable();
-                        FillDataGridView();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message.ToString());
-                    }
+                    MessageBox.Show(firstError, "Hata!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
-            }
-            else
-            {
-                MessageBox.Show("Lütfen silmek eğitim türü adına tabloda 2 defa ard arda tıklayınız.", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                else
+                {
+                    MessageBox.Show("Silme işlemi başarıyla yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    ClearAllBase();
+                    FillDataGridView();
+                }
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            string Id = txtId.Text;
-            string Name = txtName.Text;
+            if (String.IsNullOrEmpty(txtId.Text))
+                return;
 
-            if (!string.IsNullOrEmpty(Id) && !string.IsNullOrEmpty(Name))
+            EducationalStatus educationalStatus = new EducationalStatus
             {
-                SqlHelper helper = new SqlHelper();
+                Id = Convert.ToInt32(txtId.Text),
+                Name = txtName.Text
+            };
 
-                try
-                {
-                    helper.connection.Open();
+            var result = _educationalStatusManager.Update(educationalStatus);
 
-                    helper.command.CommandText = "UPDATE EducationalStatus SET Name=@p1 WHERE Id=@p2";
+            if (result.HasError())
+            {
+                string firstError = result.Errors.FirstOrDefault();
 
-                    helper.command.Parameters.AddWithValue("@p1", Name);
-                    helper.command.Parameters.AddWithValue("@p2", Id);
-
-                    helper.command.ExecuteNonQuery();
-
-                    helper.connection.Close();
-                    helper.connection.Dispose();
-
-                    ClearAllBase();
-                    FillDataTable();
-                    FillDataGridView();
-
-                    MessageBox.Show("Güncelleme Başarıyla Yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString());
-                }
-
+                MessageBox.Show(firstError, "Hata!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
             else
             {
-                MessageBox.Show("Lütfen düzenlemek istediğiniz eğitim türü adına tabloda 2 defa ard arda tıklayınız ve eğitim adının boş olmadığından emin olunuz.", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                ClearAllBase();
+                FillDataGridView();
+
+                MessageBox.Show("Güncelleme Başarıyla Yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            string name = txtName.Text;
-
-            if (!string.IsNullOrEmpty(name))
+            EducationalStatus educationalStatus = new EducationalStatus
             {
-                try
-                {
-                    SqlHelper helper = new SqlHelper();
+                Name = txtName.Text
+            };
 
-                    helper.command.CommandText = "INSERT INTO EducationalStatus (Name) values(@p1)";
-                    helper.command.Parameters.AddWithValue("@p1", name);
+            var result = _educationalStatusManager.Add(educationalStatus);
 
-                    helper.connection.Open();
-
-                    int changeCount = helper.command.ExecuteNonQuery();
-
-                    if (changeCount > 0)
-                    {
-                        MessageBox.Show("Ekleme başarıyla yapıldı!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearAllBase();
-                        FillDataTable();
-                        FillDataGridView();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Ops!, beklenmedik bir şey meydana geldi!, daha sonra tekrar deneyin.", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                    }
-
-                    helper.connection.Close();
-                    helper.connection.Dispose();
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString());
-                }
+            if (result.HasError())
+            {
+                string firstError = result.Errors.FirstOrDefault();
+                MessageBox.Show(firstError, "Hata!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
             else
             {
-                MessageBox.Show("Lütfen eğitim türü adını adını boş geçmeyiniz!", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                MessageBox.Show("Ekleme başarıyla yapıldı!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                ClearAllBase();
+                FillDataGridView();
             }
         }
     }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Kizilay.Business.Abstract;
+using Kizilay.Business.Concrete.Result;
+using Kizilay.Entities.Concrete;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,47 +16,30 @@ namespace kizilay
 {
     public partial class frmSocialSecurity : Form
     {
-        private DataTable dataTable { get; set; }
+        private ISocialSecurityManager _socialSecurityManager { get; set; }
 
-        public frmSocialSecurity()
+        public frmSocialSecurity(ISocialSecurityManager socialSecurityManager)
         {
-            InitializeComponent();
+            _socialSecurityManager = socialSecurityManager;
 
-            dataTable = new DataTable();
+            InitializeComponent();
         }
 
-        public void FillDataTable()
+        private void frmSocialSecurity_Load(object sender, EventArgs e)
         {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT * FROM SocialSecurity";
-
-            helper.connection.Open();
-
-            OleDbDataAdapter adapter = new OleDbDataAdapter(helper.command);
-            adapter.Fill(this.dataTable);
-
-            helper.connection.Close();
-            helper.connection.Dispose();
+            FillDataGridView();
         }
 
         public void FillDataGridView()
         {
-            this.dataGridView.DataSource = this.dataTable;
+            var allList = _socialSecurityManager.GetAll();
+            dataGridView.DataSource = allList;
         }
 
         public void ClearAllBase()
         {
             txtId.Text = "";
             txtName.Text = "";
-            dataTable.Clear();
-            dataGridView.DataSource = null;
-        }
-
-        private void frmSocialSecurity_Load(object sender, EventArgs e)
-        {
-            FillDataTable();
-            FillDataGridView();
         }
 
         private void dataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -62,104 +48,64 @@ namespace kizilay
 
             if (row.Index != -1)
             {
-                txtId.Text = row.Cells[0].Value.ToString();
-                txtName.Text = row.Cells[1].Value.ToString();
+                txtId.Text = row.Cells["Id"].Value.ToString();
+                txtName.Text = row.Cells["Name"].Value.ToString();
             }
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
             ClearAllBase();
-            FillDataGridView();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            string name = txtName.Text;
-
-            if (!string.IsNullOrEmpty(name))
+            SocialSecurity socialSecurity = new SocialSecurity
             {
-                try
-                {
-                    SqlHelper helper = new SqlHelper();
+                Name = txtName.Text
+            };
 
-                    helper.command.CommandText = "INSERT INTO SocialSecurity (Name) values(@p1)";
-                    helper.command.Parameters.AddWithValue("@p1", name);
+            var result = _socialSecurityManager.Add(socialSecurity);
 
-                    helper.connection.Open();
-
-                    int changeCount = helper.command.ExecuteNonQuery();
-
-                    if (changeCount > 0)
-                    {
-                        MessageBox.Show("Ekleme başarıyla yapıldı!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearAllBase();
-                        FillDataTable();
-                        FillDataGridView();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Ops!, beklenmedik bir şey meydana geldi!, daha sonra tekrar deneyin.", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                    }
-
-                    helper.connection.Close();
-                    helper.connection.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString());
-                }
-
+            if (result.HasError())
+            {
+                string firstError = result.Errors.FirstOrDefault();
+                MessageBox.Show(firstError, "Hata!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
             else
             {
-                MessageBox.Show("Lütfen sosyal güvence adını boş geçmeyiniz!", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                MessageBox.Show("Ekleme başarıyla yapıldı!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                ClearAllBase();
+                FillDataGridView();
             }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            string Id = txtId.Text;
-            string Name = txtName.Text;
+            if (String.IsNullOrEmpty(txtId.Text))
+                return;
 
-            if (!string.IsNullOrEmpty(Id) && !string.IsNullOrEmpty(Name))
+            SocialSecurity socialSecurity = new SocialSecurity
             {
-                SqlHelper helper = new SqlHelper();
+                Id = Convert.ToInt32(txtId.Text),
+                Name = txtName.Text
+            };
 
-                try
-                {
-                    helper.connection.Open();
+            var result = _socialSecurityManager.Update(socialSecurity);
 
-                    helper.command.CommandText = "UPDATE SocialSecurity SET Name=@p1 WHERE Id=@p2";
+            if (result.HasError())
+            {
+                string firstError = result.Errors.FirstOrDefault();
 
-                    helper.command.Parameters.AddWithValue("@p1", Name);
-                    helper.command.Parameters.AddWithValue("@p2", Id);
-
-                    helper.command.ExecuteNonQuery();
-
-                    helper.connection.Close();
-                    helper.connection.Dispose();
-
-                    ClearAllBase();
-                    FillDataTable();
-                    FillDataGridView();
-
-                    MessageBox.Show("Güncelleme Başarıyla Yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message.ToString());
-                }
-
-
-
-
+                MessageBox.Show(firstError, "Hata!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
             else
             {
-                MessageBox.Show("Lütfen düzenlemek istediğiniz sigorta adına tabloda 2 defa ard arda tıklayınız ve sigorta adının boş olmadığından emin olunuz.", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                ClearAllBase();
+                FillDataGridView();
+
+                MessageBox.Show("Güncelleme Başarıyla Yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -167,42 +113,29 @@ namespace kizilay
         {
             string Id = txtId.Text;
 
-            if (!string.IsNullOrEmpty(Id))
-            {
-                DialogResult result = MessageBox.Show("Seçili sosyal güvence kaydını silmek istediğinize emin misiniz?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (String.IsNullOrEmpty(Id))
+                return;
 
-                if (result == DialogResult.Yes)
+            DialogResult dialogResult = MessageBox.Show("Seçili sosyal güvence kaydını silmek istediğinize emin misiniz?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                int id = Convert.ToInt32(Id);
+                var result = _socialSecurityManager.RemoveById(id);
+
+                if (result.HasError())
                 {
-                    try
-                    {
-                        SqlHelper helper = new SqlHelper();
+                    string firstError = result.Errors.FirstOrDefault();
 
-                        helper.command.CommandText = string.Format("DELETE FROM SocialSecurity WHERE Id={0}", Id);
-
-                        helper.connection.Open();
-
-                        helper.command.ExecuteNonQuery();
-
-                        MessageBox.Show("Silme işlemi başarıyla yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        helper.connection.Close();
-                        helper.connection.Dispose();
-
-                        ClearAllBase();
-                        FillDataTable();
-                        FillDataGridView();
-
-                    }
-                    catch (Exception ex)
-                    {
-
-                        MessageBox.Show(ex.Message.ToString());
-                    }
+                    MessageBox.Show(firstError, "Hata!", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
-            }
-            else
-            {
-                MessageBox.Show("Lütfen silmek istediğiniz sigorta adına tabloda 2 defa ard arda tıklayınız.", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                else
+                {
+                    MessageBox.Show("Silme işlemi başarıyla yapıldı:)", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    ClearAllBase();
+                    FillDataGridView();
+                }
             }
         }
     }

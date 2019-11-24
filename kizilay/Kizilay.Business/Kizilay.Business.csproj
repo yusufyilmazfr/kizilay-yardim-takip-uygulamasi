@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8B007D93-2B18-481D-B2F7-0E396E9FDC38}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kizilay.Business</RootNamespace>
+    <AssemblyName>Kizilay.Business</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Interception, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Interception.3.3.3\lib\net45\Ninject.Extensions.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Interception.DynamicProxy, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Interception.DynamicProxy.3.3.3\lib\net45\Ninject.Extensions.Interception.DynamicProxy.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abstract\IAdminManager.cs" />
+    <Compile Include="Abstract\ICityManager.cs" />
+    <Compile Include="Abstract\IDonationManager.cs" />
+    <Compile Include="Abstract\IEducationalStatusManager.cs" />
+    <Compile Include="Abstract\IFamilyManager.cs" />
+    <Compile Include="Abstract\IHousingManager.cs" />
+    <Compile Include="Abstract\INeighborhoodManager.cs" />
+    <Compile Include="Abstract\IPersonDonationManager.cs" />
+    <Compile Include="Abstract\IPersonManager.cs" />
+    <Compile Include="Abstract\ISocialSecurityManager.cs" />
+    <Compile Include="Abstract\ITownManager.cs" />
+    <Compile Include="Concrete\BusinessModule\Ninject\InstanceModule.cs" />
+    <Compile Include="Concrete\Managers\AdminManager.cs" />
+    <Compile Include="Concrete\Managers\CityManager.cs" />
+    <Compile Include="Concrete\Managers\DonationManager.cs" />
+    <Compile Include="Concrete\Managers\EducationalStatusManager.cs" />
+    <Compile Include="Concrete\Managers\FamilyManager.cs" />
+    <Compile Include="Concrete\Managers\HousingManager.cs" />
+    <Compile Include="Concrete\Managers\NeighborhoodManager.cs" />
+    <Compile Include="Concrete\Managers\PersonDonationManager.cs" />
+    <Compile Include="Concrete\Managers\PersonManager.cs" />
+    <Compile Include="Concrete\Managers\SocialSecurityManager.cs" />
+    <Compile Include="Concrete\Managers\TownManager.cs" />
+    <Compile Include="Concrete\Result\LayerResult.cs" />
+    <Compile Include="Concrete\Services\ImportService\Excel\ExcelImportService.cs" />
+    <Compile Include="Concrete\Services\ImportService\Excel\IReadableFile.cs" />
+    <Compile Include="Concrete\Services\ImportService\IImportService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kizilay.Core\Kizilay.Core.csproj">
+      <Project>{B022489A-D582-4EA4-B493-A6E9C3E395CD}</Project>
+      <Name>Kizilay.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kizilay.DataAccess\Kizilay.DataAccess.csproj">
+      <Project>{F7F0F36E-A004-4226-8D3D-DC19238AC345}</Project>
+      <Name>Kizilay.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kizilay.Entities\Kizilay.Entities.csproj">
+      <Project>{80D9058F-9A64-4D98-825D-1E15A608FE16}</Project>
+      <Name>Kizilay.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

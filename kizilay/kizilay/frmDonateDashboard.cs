@@ -1,4 +1,5 @@
-﻿using System;
+﻿using kizilay.DependencyResolver.Ninject;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,12 +20,12 @@ namespace kizilay
 
         private void btnFamily_Click(object sender, EventArgs e)
         {
-            new frmNewDonate().ShowDialog();
+            FormDependencyResolver.Resolve<frmNewDonate>().ShowDialog();
         }
 
         private void btnNewDonate_Click(object sender, EventArgs e)
         {
-            new frmDonate().Show();
+            FormDependencyResolver.Resolve<frmDonate>().ShowDialog();
         }
     }
 }

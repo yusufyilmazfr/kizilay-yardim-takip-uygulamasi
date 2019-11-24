@@ -31,14 +31,14 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmEditPassword));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnUpdate = new System.Windows.Forms.Button();
-            this.txtUsername = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.txtLastPassword = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.txtRePassword = new System.Windows.Forms.TextBox();
             this.txtNewPassword = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.txtRePassword = new System.Windows.Forms.TextBox();
+            this.txtLastPassword = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtUsername = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,54 +71,19 @@
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
-            // txtUsername
+            // txtRePassword
             // 
-            this.txtUsername.Location = new System.Drawing.Point(6, 57);
-            this.txtUsername.MaxLength = 11;
-            this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(194, 26);
-            this.txtUsername.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 34);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 20);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Kullanıcı Adı:";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 92);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(89, 20);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Eski Parola:";
-            // 
-            // txtLastPassword
-            // 
-            this.txtLastPassword.Location = new System.Drawing.Point(6, 115);
-            this.txtLastPassword.MaxLength = 11;
-            this.txtLastPassword.Name = "txtLastPassword";
-            this.txtLastPassword.Size = new System.Drawing.Size(194, 26);
-            this.txtLastPassword.TabIndex = 2;
-            this.txtLastPassword.UseSystemPasswordChar = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 154);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 20);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Yeni Parola:";
+            this.txtRePassword.Location = new System.Drawing.Point(6, 234);
+            this.txtRePassword.MaxLength = 20;
+            this.txtRePassword.Name = "txtRePassword";
+            this.txtRePassword.Size = new System.Drawing.Size(194, 26);
+            this.txtRePassword.TabIndex = 4;
+            this.txtRePassword.UseSystemPasswordChar = true;
             // 
             // txtNewPassword
             // 
             this.txtNewPassword.Location = new System.Drawing.Point(6, 177);
-            this.txtNewPassword.MaxLength = 11;
+            this.txtNewPassword.MaxLength = 20;
             this.txtNewPassword.Name = "txtNewPassword";
             this.txtNewPassword.Size = new System.Drawing.Size(194, 26);
             this.txtNewPassword.TabIndex = 3;
@@ -133,14 +98,49 @@
             this.label4.TabIndex = 1;
             this.label4.Text = "Yeni Parola Tekrar: ";
             // 
-            // txtRePassword
+            // txtLastPassword
             // 
-            this.txtRePassword.Location = new System.Drawing.Point(6, 234);
-            this.txtRePassword.MaxLength = 11;
-            this.txtRePassword.Name = "txtRePassword";
-            this.txtRePassword.Size = new System.Drawing.Size(194, 26);
-            this.txtRePassword.TabIndex = 4;
-            this.txtRePassword.UseSystemPasswordChar = true;
+            this.txtLastPassword.Location = new System.Drawing.Point(6, 115);
+            this.txtLastPassword.MaxLength = 20;
+            this.txtLastPassword.Name = "txtLastPassword";
+            this.txtLastPassword.Size = new System.Drawing.Size(194, 26);
+            this.txtLastPassword.TabIndex = 2;
+            this.txtLastPassword.UseSystemPasswordChar = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 154);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 20);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Yeni Parola:";
+            // 
+            // txtUsername
+            // 
+            this.txtUsername.Location = new System.Drawing.Point(6, 57);
+            this.txtUsername.MaxLength = 11;
+            this.txtUsername.Name = "txtUsername";
+            this.txtUsername.Size = new System.Drawing.Size(194, 26);
+            this.txtUsername.TabIndex = 1;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 92);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 20);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Eski Parola:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 20);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Kullanıcı Adı:";
             // 
             // frmEditPassword
             // 

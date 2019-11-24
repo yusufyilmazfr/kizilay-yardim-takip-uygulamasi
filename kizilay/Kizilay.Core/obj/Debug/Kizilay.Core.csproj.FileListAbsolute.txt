@@ -1,0 +1,14 @@
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Kizilay.Core.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Kizilay.Core.pdb
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\obj\Debug\Kizilay.Core.csproj.CoreCompileInputs.cache
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\obj\Debug\Kizilay.Core.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\obj\Debug\Kizilay.Core.pdb
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Kizilay.Core.dll.config
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Ninject.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Ninject.Extensions.Interception.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Ninject.xml
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Ninject.Extensions.Interception.xml
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\obj\Debug\Kizilay.Core.csproj.CopyComplete
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Castle.Core.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Ninject.Extensions.Interception.DynamicProxy.dll
+D:\Program Files\GitHub\Kizilay-yardim-takip-uygulamasi\kizilay\Kizilay.Core\bin\Debug\Ninject.Extensions.Interception.DynamicProxy.xml

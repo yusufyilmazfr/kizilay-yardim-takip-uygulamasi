@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -44,7 +46,20 @@
     <ApplicationIcon>favicon1.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Interception, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Interception.3.3.3\lib\net45\Ninject.Extensions.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Interception.DynamicProxy, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Interception.DynamicProxy.3.3.3\lib\net45\Ninject.Extensions.Interception.DynamicProxy.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -58,9 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllPersonModel.cs" />
-    <Compile Include="CreateMD5.cs" />
-    <Compile Include="DonationModel.cs" />
-    <Compile Include="DonationProcessModel.cs" />
+    <Compile Include="DependencyResolver\Ninject\FormDependencyResolver.cs" />
     <Compile Include="frmAllFamily.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -157,7 +170,7 @@
     <Compile Include="frmSocialSecurity.Designer.cs">
       <DependentUpon>frmSocialSecurity.cs</DependentUpon>
     </Compile>
-    <Compile Include="image\SqlHelper.cs" />
+    <Compile Include="Images\SqlHelper.cs" />
     <Compile Include="frmAccountLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,12 +183,14 @@
     <Compile Include="frmNewPerson.Designer.cs">
       <DependentUpon>frmNewPerson.cs</DependentUpon>
     </Compile>
+    <Compile Include="Item\ComboBoxItem.cs" />
     <Compile Include="PersonModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadExcel.cs" />
+    <Compile Include="ExportService\Excel\ExcelExportService.cs" />
+    <Compile Include="ExportService\IExportService.cs" />
     <Compile Include="SqlHelper.cs" />
-    <Compile Include="WriteDataToExcel.cs" />
     <EmbeddedResource Include="frmAllFamily.resx">
       <DependentUpon>frmAllFamily.cs</DependentUpon>
     </EmbeddedResource>
@@ -239,6 +254,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -257,26 +273,26 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="favicon1.ico" />
-    <Content Include="image\all-family.png" />
-    <Content Include="image\category.png" />
-    <Content Include="image\create family.png" />
-    <Content Include="image\create family1.png" />
-    <Content Include="image\d-setting.png" />
-    <Content Include="image\donate.png" />
-    <Content Include="image\edit-donate.png" />
-    <Content Include="image\education.png" />
-    <Content Include="image\export image.png" />
-    <Content Include="image\family-member.png" />
-    <Content Include="image\family.png" />
-    <Content Include="image\favicon1.ico" />
-    <Content Include="image\home.png" />
-    <Content Include="image\house.png" />
-    <Content Include="image\import.png" />
-    <Content Include="image\ktu-logo.jpg" />
-    <Content Include="image\ktu.jpg" />
-    <Content Include="image\mother.png" />
-    <Content Include="image\settings.png" />
-    <Content Include="image\social security.png" />
+    <Content Include="Images\all-family.png" />
+    <Content Include="Images\category.png" />
+    <Content Include="Images\create family.png" />
+    <Content Include="Images\create family1.png" />
+    <Content Include="Images\d-setting.png" />
+    <Content Include="Images\donate.png" />
+    <Content Include="Images\edit-donate.png" />
+    <Content Include="Images\education.png" />
+    <Content Include="Images\export image.png" />
+    <Content Include="Images\family-member.png" />
+    <Content Include="Images\family.png" />
+    <Content Include="Images\favicon1.ico" />
+    <Content Include="Images\home.png" />
+    <Content Include="Images\house.png" />
+    <Content Include="Images\import.png" />
+    <Content Include="Images\ktu-logo.jpg" />
+    <Content Include="Images\ktu.jpg" />
+    <Content Include="Images\mother.png" />
+    <Content Include="Images\settings.png" />
+    <Content Include="Images\social security.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
@@ -306,6 +322,23 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kizilay.Business\Kizilay.Business.csproj">
+      <Project>{8B007D93-2B18-481D-B2F7-0E396E9FDC38}</Project>
+      <Name>Kizilay.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kizilay.Core\Kizilay.Core.csproj">
+      <Project>{B022489A-D582-4EA4-B493-A6E9C3E395CD}</Project>
+      <Name>Kizilay.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kizilay.Entities\Kizilay.Entities.csproj">
+      <Project>{80D9058F-9A64-4D98-825D-1E15A608FE16}</Project>
+      <Name>Kizilay.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

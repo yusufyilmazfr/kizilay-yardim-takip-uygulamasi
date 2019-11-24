@@ -1,4 +1,7 @@
-﻿using System;
+﻿using kizilay.DependencyResolver.Ninject;
+using Kizilay.Business.Concrete.BusinessModule.Ninject;
+using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +17,14 @@ namespace kizilay
         [STAThread]
         static void Main()
         {
+            var loginForm = FormDependencyResolver.Resolve<frmLogin>();
+
+            Control.CheckForIllegalCrossThreadCalls = false;
+
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmLogin());
+
+            //Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(loginForm);
         }
     }
 }

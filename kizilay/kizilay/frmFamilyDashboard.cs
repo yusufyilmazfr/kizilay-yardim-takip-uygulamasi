@@ -1,4 +1,5 @@
-﻿using System;
+﻿using kizilay.DependencyResolver.Ninject;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,17 +23,17 @@ namespace kizilay
 
         private void btnNewFamily_Click(object sender, EventArgs e)
         {
-            new frmNewFamily().Show();
+            FormDependencyResolver.Resolve<frmNewFamily>().Show();
         }
 
         private void btnAddPerson_Click(object sender, EventArgs e)
         {
-            new frmNewPerson().Show();
+            FormDependencyResolver.Resolve<frmNewPerson>().Show();
         }
 
         private void btnShowAllFamily_Click(object sender, EventArgs e)
         {
-            new frmAllFamily().Show();
+            FormDependencyResolver.Resolve<frmAllFamily>().Show();
         }
 
         private void btnEditFamily_Click(object sender, EventArgs e)
@@ -42,12 +43,12 @@ namespace kizilay
 
         private void btnShowAllFamily_Click_1(object sender, EventArgs e)
         {
-            new frmAllFamily().Show();
+            FormDependencyResolver.Resolve<frmAllFamily>().Show();
         }
 
         private void btnEditFamily_Click_1(object sender, EventArgs e)
         {
-            new frmEditFamily().Show();
+            FormDependencyResolver.Resolve<frmEditFamily>().Show();
         }
     }
 }

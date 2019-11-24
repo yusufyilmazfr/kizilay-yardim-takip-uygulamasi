@@ -74,7 +74,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1437, 163);
+            this.panel1.Size = new System.Drawing.Size(1420, 163);
             this.panel1.TabIndex = 3;
             // 
             // groupBox2
@@ -298,7 +298,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 163);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1437, 595);
+            this.panel2.Size = new System.Drawing.Size(1420, 594);
             this.panel2.TabIndex = 4;
             // 
             // panel3
@@ -308,16 +308,16 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1437, 595);
+            this.panel3.Size = new System.Drawing.Size(1420, 594);
             this.panel3.TabIndex = 0;
             // 
             // panel4
             // 
             this.panel4.Controls.Add(this.groupBox1);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel4.Location = new System.Drawing.Point(1225, 0);
+            this.panel4.Location = new System.Drawing.Point(1208, 0);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(212, 595);
+            this.panel4.Size = new System.Drawing.Size(212, 594);
             this.panel4.TabIndex = 2;
             // 
             // groupBox1
@@ -392,7 +392,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1223, 592);
+            this.dataGridView1.Size = new System.Drawing.Size(1206, 591);
             this.dataGridView1.TabIndex = 1;
             // 
             // frmAllFamily
@@ -400,7 +400,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Silver;
-            this.ClientSize = new System.Drawing.Size(1437, 758);
+            this.ClientSize = new System.Drawing.Size(1420, 757);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Font = new System.Drawing.Font("Century Gothic", 9F);

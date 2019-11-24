@@ -1,4 +1,7 @@
-﻿using System;
+﻿using kizilay.Item;
+using Kizilay.Business.Abstract;
+using Kizilay.Entities.Concrete;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,168 +16,109 @@ namespace kizilay
 {
     public partial class frmNewPerson : Form
     {
-        public int FatherId { get; set; }
-        Dictionary<string, int> EducationalStateList;
-        Dictionary<string, int> SocialSecurityList;
+        private IEducationalStatusManager _educationalStatusManager { get; set; }
+        private ISocialSecurityManager _socialSecurityManager { get; set; }
+        private IPersonManager _personManager { get; set; }
+        private IFamilyManager _familyManager { get; set; }
 
-        public frmNewPerson()
+        public frmNewPerson(IEducationalStatusManager educationalStatusManager,
+            ISocialSecurityManager socialSecurityManager,
+            IPersonManager personManager,
+            IFamilyManager familyManager)
         {
+            _educationalStatusManager = educationalStatusManager;
+            _socialSecurityManager = socialSecurityManager;
+            _personManager = personManager;
+            _familyManager = familyManager;
+
             InitializeComponent();
-            EducationalStateList = new Dictionary<string, int>();
-            SocialSecurityList = new Dictionary<string, int>();
         }
 
-        public void FillEducationStateList()
+
+
+        private void frmNewPerson_Load(object sender, EventArgs e)
         {
-            SqlHelper helper = new SqlHelper();
+            FillEducationalStatusList();
+            FillSocialSecurityList();
+        }
 
-            helper.command.CommandText = "SELECT Id,Name FROM EducationalStatus";
+        public void FillEducationalStatusList()
+        {
+            var educationalStatusList = _educationalStatusManager.GetAll();
 
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
+            foreach (var item in educationalStatusList)
             {
-                while (reader.Read())
-                {
-                    EducationalStateList.Add(reader.GetString(1), reader.GetInt32(0));
-                }
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbEducationalStatus.Items.Add(comboBoxItem);
             }
+        }
 
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
+        public int GetCurrentEducationalStatusId()
+        {
+            return ((ComboBoxItem)cmbEducationalStatus.SelectedItem).Value;
         }
 
         public void FillSocialSecurityList()
         {
-            SqlHelper helper = new SqlHelper();
+            var allSocialSecurityList = _socialSecurityManager.GetAll();
 
-            helper.command.CommandText = "SELECT Id, Name FROM SocialSecurity";
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
+            foreach (var item in allSocialSecurityList)
             {
-                while (reader.Read())
-                {
-                    SocialSecurityList.Add(reader.GetString(1), reader.GetInt32(0));
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            helper.connection.Close();
-            helper.connection.Dispose();
-        }
-
-        public void FillComboBoxEducation()
-        {
-            foreach (var item in EducationalStateList)
-            {
-                this.cmbEducationalStatus.Items.Add(item.Key);
+                ComboBoxItem comboBoxItem = new ComboBoxItem(item.Name, item.Id);
+                cmbSocialSecurity.Items.Add(comboBoxItem);
             }
         }
 
-        public void FillComboBoxSocialSecurity()
+        public int GetCurrentSocialSecurityId()
         {
-            foreach (var item in SocialSecurityList)
-            {
-                this.cmbSocialSecurity.Items.Add(item.Key);
-            }
-        }
-
-        public bool PersonExist(string PersonNo)
-        {
-            SqlHelper helper = new SqlHelper();
-
-            helper.command.CommandText = "SELECT TC FROM Person";
-
-            helper.connection.Open();
-
-            OleDbDataReader reader = helper.command.ExecuteReader();
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    if (reader.GetString(0) == PersonNo)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            else
-            {
-                reader.Close();
-                reader.Dispose();
-                helper.connection.Close();
-                helper.connection.Dispose();
-                return false;
-            }
-
+            return ((ComboBoxItem)cmbSocialSecurity.SelectedItem).Value;
         }
 
         private void txtTcNo_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
                 e.Handled = true;
-            }
         }
 
         private void txtTcNo_TextChanged(object sender, EventArgs e)
         {
-            if (txtTcNo.Text.Length == 11)
+            string tcNo = txtTcNo.Text;
+
+            if (tcNo.Length == 11)
             {
-                if (PersonExist(txtTcNo.Text))
+                bool personExists = _personManager.PersonExistsByTCNo(tcNo);
+
+                if (personExists)
                 {
                     MessageBox.Show("Kişi zaten kayıtlı!", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                     btnCreate.Enabled = false;
+                }
+                else
+                {
+                    if (txtFatherNo.Text.Length == 11)
+                        btnCreate.Enabled = true;
                 }
             }
         }
 
         private void txtFatherNo_TextChanged(object sender, EventArgs e)
         {
-            if (((TextBox)sender).Text.Length == 11)
+            string fatherTCNo = txtFatherNo.Text;
+
+            if (fatherTCNo.Length == 11)
             {
-                SqlHelper helper = new SqlHelper();
+                bool familyIsExists = _familyManager.FamilyExistsByFatherTCNo(fatherTCNo);
 
-                helper.command.CommandText = string.Format("SELECT Id FROM Family WHERE FatherNo='{0}'", ((TextBox)sender).Text);
-
-                helper.connection.Open();
-
-                OleDbDataReader reader = helper.command.ExecuteReader();
-
-                if (!reader.HasRows)
+                if (!familyIsExists)
                 {
                     MessageBox.Show("Böyle bir aile bulunmamaktadır!", "Uyarı!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     btnCreate.Enabled = false;
                 }
                 else
                 {
-                    while (reader.Read())
-                    {
-                        FatherId = reader.GetInt32(0);
-                        break;
-                    }
-                    btnCreate.Enabled = true;
+                    if (txtTcNo.Text.Length == 11)
+                        btnCreate.Enabled = true;
                 }
-
-                helper.connection.Close();
-                helper.connection.Dispose();
-            }
-            else
-            {
-                this.btnCreate.Enabled = false;
             }
         }
 
@@ -182,10 +126,10 @@ namespace kizilay
         {
             if (chckNotWorking.Checked)
             {
-                this.txtJob.Enabled = false;
-                this.numSalary.Enabled = false;
-                this.numSalary.Value = 0;
-                this.txtJob.Text = "Çalışmıyor.";
+                txtJob.Enabled = false;
+                numSalary.Enabled = false;
+                numSalary.Value = 0;
+                txtJob.Text = "Çalışmıyor.";
             }
         }
 
@@ -193,81 +137,52 @@ namespace kizilay
         {
             if (chckWorking.Checked)
             {
-                this.txtJob.Enabled = true;
-                this.numSalary.Enabled = true;
-                this.txtJob.Text = "";
+                txtJob.Enabled = true;
+                numSalary.Enabled = true;
+                txtJob.Text = "";
             }
-        }
-
-        private void frmNewPerson_Load(object sender, EventArgs e)
-        {
-            FillEducationStateList();
-            FillSocialSecurityList();
-            FillComboBoxEducation();
-            FillComboBoxSocialSecurity();
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtName.Text) && !string.IsNullOrEmpty(txtSurname.Text))
+            int familyId = _familyManager.GetFamilyByFatherTCNo(txtFatherNo.Text).Id;
+
+            Person person = new Person()
             {
-                try
-                {
-                    bool working = chckWorking.Checked ? true : false;
-                    bool gender = chckMan.Checked ? true : false;
+                TC = txtTcNo.Text,
+                Citizenship = txtCitizenship.Text,
+                Name = txtName.Text,
+                Surname = txtSurname.Text,
+                BirthDate = dateBirthDate.Value,
+                PlaceOfBirth = txtPlaceOfBirth.Text,
+                Gender = chckMan.Checked,
+                JobState = chckWorking.Checked,
+                JobDescription = txtJob.Text,
+                Salary = numSalary.Value,
+                Reference = rchReference.Text,
+                MobilePhone = mskPhone.Text,
+                HomePhone = mskPhone.Text,
+                MotherName = txtMotherName.Text,
+                FatherName = txtFatherName.Text,
+                isMarried = cmbMarried.SelectedItem.ToString(),
+                EducationalStatus = GetCurrentEducationalStatusId(),
+                SocialSecurityId = GetCurrentSocialSecurityId(),
+                FamilyId = familyId
+            };
 
-                    SqlHelper helper = new SqlHelper();
+            var layerResult = _personManager.Add(person);
 
-                    helper.command.CommandText = "INSERT INTO Person (TC,Citizenship,Name,Surname,BirthDate,PlaceOfBirth,Gender,JobState,JobDescription,Salary,MobilePhone,HomePhone,MotherName,FatherName,isMarried,EducationalStatus,SocialSecurityId,FamilyId) values(@p1,@p2,@p3,@p4,@p5,@p6,@p7,@p8,@p9,@p10,@p11,@p12,@p14,@p15,@p16,@p17,@p18,@p19)";
-
-                    helper.command.Parameters.AddWithValue("@p1", txtTcNo.Text);
-                    helper.command.Parameters.AddWithValue("@p2", txtCitizenship.Text);
-                    helper.command.Parameters.AddWithValue("@p3", txtName.Text);
-                    helper.command.Parameters.AddWithValue("@p4", txtSurname.Text);
-                    helper.command.Parameters.AddWithValue("@p5", dateBirthDate.Value); //short date
-                    helper.command.Parameters.AddWithValue("@p6", txtPlaceOfBirth.Text);
-                    helper.command.Parameters.AddWithValue("@p7", gender);
-                    helper.command.Parameters.AddWithValue("@p8", working);
-                    helper.command.Parameters.AddWithValue("@p9", txtJob.Text);
-                    helper.command.Parameters.AddWithValue("@p10", numSalary.Value);
-                    helper.command.Parameters.AddWithValue("@p11", mskPhone.Text);
-                    helper.command.Parameters.AddWithValue("@p12", mskPhone.Text);
-                    helper.command.Parameters.AddWithValue("@p14", txtMotherName.Text);
-                    helper.command.Parameters.AddWithValue("@p15", txtFatherName.Text);
-                    helper.command.Parameters.AddWithValue("@p16", cmbMarried.SelectedItem);
-                    helper.command.Parameters.AddWithValue("@p17", EducationalStateList.First(i => i.Key == cmbEducationalStatus.SelectedItem).Value);
-                    helper.command.Parameters.AddWithValue("@p18", SocialSecurityList.First(i => i.Key == cmbSocialSecurity.SelectedItem).Value);
-                    helper.command.Parameters.AddWithValue("@p19", FatherId);
-
-
-
-
-
-
-
-                    helper.connection.Open();
-
-                    helper.command.ExecuteNonQuery();
-
-                    helper.connection.Close();
-                    helper.connection.Dispose();
-
-                    MessageBox.Show("Aile kaydı başarıyla oluşturuldu! :) \n Yönlendiriliyorsunuz...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    this.Close();
-                    this.Dispose();
-
-                }
-                catch (Exception ex)
-                {
-
-                    MessageBox.Show(ex.Message.ToString(), "HATA!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
+            if (layerResult.HasError())
             {
-                MessageBox.Show("Ad, Soyad, TC, Adres gibi alanların doldurulması zorunludur:)", "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                string firstError = layerResult.Errors.FirstOrDefault();
+                MessageBox.Show(firstError, "", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                return;
             }
+
+            MessageBox.Show("Aile kaydı başarıyla oluşturuldu! :) \n Yönlendiriliyorsunuz...", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            this.Close();
+            this.Dispose();
         }
 
         private void btnTransfer_Click(object sender, EventArgs e)

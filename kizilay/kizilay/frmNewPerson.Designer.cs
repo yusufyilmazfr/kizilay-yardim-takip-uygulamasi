@@ -72,12 +72,16 @@
             this.txtFatherNo = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.btnCreate = new System.Windows.Forms.Button();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.rchReference = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numSalary)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -524,6 +528,34 @@
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.rchReference);
+            this.groupBox5.Controls.Add(this.label12);
+            this.groupBox5.Location = new System.Drawing.Point(519, 126);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(247, 166);
+            this.groupBox5.TabIndex = 23;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Referans Bilgileri";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(12, 28);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(77, 20);
+            this.label12.TabIndex = 1;
+            this.label12.Text = "Açıklama";
+            // 
+            // rchReference
+            // 
+            this.rchReference.Location = new System.Drawing.Point(20, 52);
+            this.rchReference.Name = "rchReference";
+            this.rchReference.Size = new System.Drawing.Size(210, 96);
+            this.rchReference.TabIndex = 2;
+            this.rchReference.Text = "";
+            // 
             // frmNewPerson
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -531,6 +563,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(778, 587);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.btnCreate);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -555,6 +588,8 @@
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -604,5 +639,8 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ComboBox cmbMarried;
         private System.Windows.Forms.Button btnTransfer;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.RichTextBox rchReference;
+        private System.Windows.Forms.Label label12;
     }
 }

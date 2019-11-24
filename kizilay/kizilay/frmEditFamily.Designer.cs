@@ -211,7 +211,6 @@
             this.cmbCities.Name = "cmbCities";
             this.cmbCities.Size = new System.Drawing.Size(194, 28);
             this.cmbCities.TabIndex = 4;
-            this.cmbCities.SelectedIndexChanged += new System.EventHandler(this.cmbCities_SelectedIndexChanged);
             // 
             // label4
             // 
